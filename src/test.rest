@@ -1,8 +1,12 @@
-POST http://localhost:3000/users/login
+POST http://localhost:3000/sessions/join
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJ1bHJpY2hAZXhhbXBsZS5jb20iLCJpYXQiOjE3NTg0MjQ4NzQsImV4cCI6MTc1ODUxMTI3NH0.KlaX4gENuSONUWGgiL1E0a-FgK1EC-77mg9jZFLviKM
 
 {
-  "name": "Ulrich",
-  "email": "ulrich@example.com",
-  "password": "mypassword"
+  "id": 7,
 }
+
+
+
+
+
