@@ -14,10 +14,10 @@ app.use(express.json());
 app.use(morgan("dev"));
 
 // Routes
-app.use('/users', userRoutes);          // /users/register, /users/login
-app.use('/polls', pollRoutes);          // /polls (create poll)
-app.use('/polls', pollAnswerRoutes);
-app.use("/sessions", sessionRoutes);    // /polls/answer (submit answer)
+app.use('/users', userRoutes);           // /users/register, /users/login
+app.use('/polls', pollRoutes);           // /polls (create poll, list polls, etc.)
+app.use('/poll-answers', pollAnswerRoutes); // /poll-answers/answer (submit answer)
+app.use('/sessions', sessionRoutes);     // /sessions (session handling)
 
 // Global error handler
 app.use((err, req, res, next) => {
