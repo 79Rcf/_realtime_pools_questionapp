@@ -1,33 +1,21 @@
 import express from 'express';
+import userRoutes from './src/routes/userRoutes.js'
 import morgan from 'morgan';
-import dotenv from 'dotenv';
-import userRoutes from './src/routes/userRoutes.js';
-import pollRoutes from './src/routes/pollRoutes.js';
-import pollAnswerRoutes from './src/routes/pollAnswerRoutes.js';
-import sessionRoutes from "./src/routes/sessionRoutes.js";
-
-dotenv.config();
-const app = express();
-
-// Middlewares
+const app = express()
 app.use(express.json());
+app.use('/users', userRoutes)
 app.use(morgan("dev"));
 
-// Routes
-app.use('/users', userRoutes);           // /users/register, /users/login
-app.use('/polls', pollRoutes);           // /polls (create poll, list polls, etc.)
-app.use('/poll-answers', pollAnswerRoutes); // /poll-answers/answer (submit answer)
-app.use('/sessions', sessionRoutes);     // /sessions (session handling)
+app.use("users", userRoutes);
 
-// Global error handler
-app.use((err, req, res, next) => {
-  console.error("💥 Global Error:", err);
-  res.status(500).json({ error: err.message, stack: err.stack });
+app.use((err, req, res, next)=> {
+    console.error("Error:", err.message);
+    res.status(500).json({ error: err.message });
 });
 
-// Test endpoint
-app.get('/', (req, res) => res.send('API running...'));
+const port = process.env.PORT || 3000
 
-// Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.get('/', (req, res) => res.send('Hello World!'))
+
+app.listen(port, () => 
+console.log(`app listening on port ${port}!`))

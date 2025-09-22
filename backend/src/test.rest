@@ -1,56 +1,8 @@
-### 1. REGISTER USER
-POST http://localhost:3000/users/register
-Content-Type: application/json
-
-{
-  "name": "john",
-  "email": "john@example.com",
-  "password": "secret123"
-}
-
-### 2. LOGIN USER (get JWT token here)
 POST http://localhost:3000/users/login
 Content-Type: application/json
 
 {
-  "email": "john@example.com",
-  "password": "secret123"
-}
-
-### 3. CREATE POLL (use JWT from login)
-POST http://localhost:3000/polls
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiZW1haWwiOiJqb2huQGV4YW1wbGUuY29tIiwiaWF0IjoxNzU4NDUxOTAzLCJleHAiOjE3NTg1MzgzMDN9.v2kwatDS1j-J-GkQD4El6qvUt2DYK8pf8d8m42jBhRs
-
-{
-  "question": "Which programming language do you like most?",
-  "options": ["JavaScript", "Python", "Go"]
-}
-
-### 4. SUBMIT POLL ANSWER
-POST http://localhost:3000/poll-answers/answer
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiZW1haWwiOiJqb2huQGV4YW1wbGUuY29tIiwiaWF0IjoxNzU4NDUxMjcyLCJleHAiOjE3NTg1Mzc2NzJ9.L8N2UZ7vAmAM1Yf4cPhqp1MBxjcl7Sj5cvgl4ovXbDI
-
-{
-  "pollId": 23,
-  "answer": "Python"
-}
-
-### 5. CREATE SESSION
-POST http://localhost:3000/sessions/create
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiZW1haWwiOiJqb2huQGV4YW1wbGUuY29tIiwiaWF0IjoxNzU4NDUxMjcyLCJleHAiOjE3NTg1Mzc2NzJ9.L8N2UZ7vAmAM1Yf4cPhqp1MBxjcl7Sj5cvgl4ovXbDI
-
-{
-  "pollId": 23
-}
-
-### 6. JOIN SESSION
-POST http://localhost:3000/sessions/join
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiZW1haWwiOiJqb2huQGV4YW1wbGUuY29tIiwiaWF0IjoxNzU4NDUxMjcyLCJleHAiOjE3NTg1Mzc2NzJ9.L8N2UZ7vAmAM1Yf4cPhqp1MBxjcl7Sj5cvgl4ovXbDI
-
-{
-  "sessionId": 10
+  "name": "Ulrich",
+  "email": "ulrich@example.com",
+  "password": "mypassword"
 }
