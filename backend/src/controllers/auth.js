@@ -74,19 +74,6 @@ export const signIn = async (req, res, next) => {
       token,
     });
 
-    export const signOut = async (req, res, next) => {
-  try {
-    // If you stored token in a cookie:
-    // res.clearCookie("token");
-
-    res.json({
-      message: "Signout successful. Please remove the token on client side.",
-    });
-  } catch (err) {
-    next(err);
-  }
-};
-
   } catch (err) {
     next(err);
   }
