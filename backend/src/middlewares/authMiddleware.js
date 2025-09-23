@@ -1,18 +1,27 @@
-// src/middlewares/authMiddleware.js
 import jwt from "jsonwebtoken";
 
 export const protect = (req, res, next) => {
-  const authHeader = req.headers["authorization"];
-  if (!authHeader) return res.status(401).json({ error: "No token provided" });
+    try {
+        let token;
 
-  const token = authHeader.split(" ")[1];
-  if (!token) return res.status(401).json({ error: "Token missing" });
+        if (
+            req.header.authorization &&
+            req.header.authorization.startWith("Bearer")
+        ) {
+            token = req.header.authorization.split( " " )[1];
+        }
 
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = { id: decoded.id, email: decoded.email }; // attach user info
-    next();
-  } catch (err) {
-    return res.status(403).json({ error: "Invalid token" });
-  }
+        if (!token) {
+            return res.status(401).json({ error: "NOT AUTHORIZED, NO TOKEN" });
+        }
+
+        const decoded = jwt.verify(token, process.env.jwt_SECRET);
+
+        req.user = decoded;
+
+        next();
+    } catch (error) {
+        console.error(" AUTH ERROR", err.message);
+        return res.status(401).json({ error: "NOT AUTHORIZED, TOKEN FAILEd " });
+    }
 };

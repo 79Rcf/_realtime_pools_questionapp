@@ -1,21 +1,24 @@
-import express from 'express';
-import userRoutes from './src/routes/userRoutes.js'
-import morgan from 'morgan';
-const app = express()
+// src/index.js
+import express from "express";
+import dotenv from "dotenv";
+import morgan from "morgan";
+import authRoutes from "./routes/auth.js";
+import errorHandler from "./middlewares/errorHandler.js";
+
+dotenv.config();
+const app = express();
+
+// Middlewares
 app.use(express.json());
-app.use('/users', userRoutes)
 app.use(morgan("dev"));
 
-app.use("users", userRoutes);
+// Routes
+app.use("/auth", authRoutes);
 
-app.use((err, req, res, next)=> {
-    console.error("Error:", err.message);
-    res.status(500).json({ error: err.message });
-});
+// Error handler
+app.use(errorHandler);
 
-const port = process.env.PORT || 3000
+app.get("/", (req, res) => res.send("API running..."));
 
-app.get('/', (req, res) => res.send('Hello World!'))
-
-app.listen(port, () => 
-console.log(`app listening on port ${port}!`))
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(` Server running on port ${PORT}`));
