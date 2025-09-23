@@ -5,23 +5,23 @@ export const protect = (req, res, next) => {
         let token;
 
         if (
-            req.header.authorization &&
-            req.header.authorization.startWith("Bearer")
+            req.headers.authorization &&
+            req.headers.authorization.startsWith("Bearer")
         ) {
-            token = req.header.authorization.split( " " )[1];
+            token = req.headers.authorization.split(" ")[1];
         }
 
         if (!token) {
             return res.status(401).json({ error: "NOT AUTHORIZED, NO TOKEN" });
         }
 
-        const decoded = jwt.verify(token, process.env.jwt_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET); 
 
         req.user = decoded;
 
         next();
     } catch (error) {
-        console.error(" AUTH ERROR", err.message);
-        return res.status(401).json({ error: "NOT AUTHORIZED, TOKEN FAILEd " });
+        console.error("AUTH ERROR", error.message);
+        return res.status(401).json({ error: "NOT AUTHORIZED, TOKEN FAILED" });
     }
 };
