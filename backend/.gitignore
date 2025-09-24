@@ -1,2 +1,30 @@
-node_module/
+# Operating System files
+.DS_Store
+Thumbs.db
+
+# IDE/Editor files (examples)
+.idea/
+.vscode/
+*.swp
+*.bak
+*.swo
+
+# Build artifacts and generated files (examples)
+build/
+dist/
+target/
+*.log
+*.tmp
+*.class
+*.pyc
+
+# Dependency directories (examples)
+node_modules/
+vendor/
+venv/
+
+# Sensitive data (examples - adapt to your specific needs)
 .env
+config/secrets.yml
+
+
