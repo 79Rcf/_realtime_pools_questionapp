@@ -1,26 +1,14 @@
-import bcrypt from "bcryptjs";
 import connection from "../config/database.js";
 
-export const createUser = async ({ username, email, password }) => {
-  const salt = await bcrypt.genSalt(10);
-  const password_hash = await bcrypt.hash(password, salt);
-
+// Get all users
+export const findAllUsers = async () => {
   const result = await connection.query(
-    "INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) RETURNING id, username, email, created_at",
-    [username, email, password_hash]
+    "SELECT id, username, email, created_at FROM users"
   );
-
-  return result.rows[0];
+  return result.rows;
 };
 
-export const findUserByEmail = async (email) => {
-  const result = await connection.query(
-    "SELECT * FROM users WHERE email=$1",
-    [email]
-  );
-  return result.rows[0]; // returns user object or undefined
-};
-
+// Get a user by ID
 export const findUserById = async (id) => {
   const result = await connection.query(
     "SELECT id, username, email, created_at FROM users WHERE id=$1",

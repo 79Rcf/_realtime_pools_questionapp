@@ -1,8 +1,6 @@
-POST http://localhost:3000/api/auth/signUp
-Content-Type: application/json <>
+GET http://localhost:3000/api/users/
+Headers:
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OSwiZW1haWwiOiJqb2huQGV4YW1wbGUuY29tIiwiaWF0IjoxNzU4NjcyODI2LCJleHAiOjE3NTg3NTkyMjZ9.s5qumXTWFmVlpmAHQrrenbirpsCNFk43YWQTgVpuEoA  
 
-{
-  "username": "Ulrich",
-  "email": "ulrich@example.com",
-  "password": "mypassword"
-}
+

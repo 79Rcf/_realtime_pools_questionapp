@@ -3,6 +3,10 @@ import dotenv from "dotenv";
 import morgan from "morgan";
 import authRoutes from "./src/routes/auth.js";
 import errorHandler from "./src/middlewares/errorHandler.js"
+import pollsRoutes from "./src/routes/polls.js"
+import cookieParser from "cookie-parser";
+import userRoutes from "./src/routes/user.js"
+import pollAnswerRoutes from "./src/routes/pollAnswers.js"
 
 dotenv.config();
 const app = express();
@@ -10,10 +14,13 @@ const app = express();
 
 app.use(express.json());
 app.use(morgan("dev"));
-
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
-
+app.use("/api/users", userRoutes)
+app.use("/api/polls", pollsRoutes);
+app.use("/api/pollsAnswer", pollAnswerRoutes);
 
 app.use(errorHandler);
 

@@ -26,3 +26,5 @@ venv/
 # Sensitive data (examples - adapt to your specific needs)
 .env
 config/secrets.yml
+
+
