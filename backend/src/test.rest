@@ -1,4 +1,108 @@
-POST http://localhost:3000/api/session/
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OSwiZW1haWwiOiJqb2huQGV4YW1wbGUuY29tIiwiaWF0IjoxNzU4NjcyODI2LCJleHAiOjE3NTg3NTkyMjZ9.s5qumXTWFmVlpmAHQrrenbirpsCNFk43YWQTgVpuEoA  
+### AUTHENTICATION
 
+# Sign Up
+POST http://localhost:3000/api/auth/signUp
+Content-Type: application/json
+
+{
+  "username": "sir",
+  "email": "sir@example.com",
+  "password": "secret123"
+}
+
+# Sign In
+POST http://localhost:3000/api/auth/signIn
+Content-Type: application/json
+
+{
+  "email": "sir@example.com",
+  "password": "secret123"
+}
+
+### POLLS
+
+# Create Poll (draft)
+POST http://localhost:3000/api/polls
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "question": "What is your favorite color?",
+  "options": ["Red", "Blue", "Green"],
+  "session_id": 1
+}
+
+# Update Poll (only draft/hidden)
+PUT http://localhost:3000/api/polls/1
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "question": "What is your favorite fruit?",
+  "options": ["Apple", "Banana", "Orange"]
+}
+
+# Publish Poll
+PATCH http://localhost:3000/api/polls/1/publish
+Authorization: Bearer {{TOKEN}}
+
+# Hide Poll
+PATCH http://localhost:3000/api/polls/1/hide
+Authorization: Bearer {{TOKEN}}
+
+# Complete Poll
+PATCH http://localhost:3000/api/polls/1/complete
+Authorization: Bearer {{TOKEN}}
+
+# Get All Polls
+GET http://localhost:3000/api/polls
+Authorization: Bearer {{TOKEN}}
+
+# Get Poll by ID
+GET http://localhost:3000/api/polls/1
+Authorization: Bearer {{TOKEN}}
+
+# Get all session polls (published + completed)
+GET http://localhost:3000/api/polls/session/1
+Authorization: Bearer {{TOKEN}}
+
+### SESSION
+
+# Create Session
+POST http://localhost:3000/api/sessions
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "title": "Morning Meeting"
+}
+
+# Get All Sessions
+GET http://localhost:3000/api/sessions
+Authorization: Bearer {{TOKEN}}
+
+# Get Single Session by ID
+GET http://localhost:3000/api/sessions/1
+Authorization: Bearer {{TOKEN}}
+
+# Join Session as Participant
+POST http://localhost:3000/api/sessions/join
+Content-Type: application/json
+
+{
+  "code": "FB755C",
+  "name": "Participant One",
+  "phone": "237123456789"
+}
+
+### POLL ANSWERS
+
+# Submit Poll Answer
+POST http://localhost:3000/api/pollAnswers/1
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "participant_id": 1,
+  "answer": "Blue"
+}
