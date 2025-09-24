@@ -145,4 +145,22 @@ export const getPollById = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+};// Get all published polls for a specific session
+export const getSessionPolls = async (req, res, next) => {
+  try {
+    const { session_id } = req.params;
+    const result = await connection.query(
+      "SELECT * FROM polls WHERE session_id=$1 AND status='published'",
+      [session_id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "No published polls found for this session" });
+    }
+
+    res.status(200).json({ polls: result.rows });
+  } catch (err) {
+    next(err);
+  }
 };
+

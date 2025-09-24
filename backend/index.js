@@ -7,6 +7,7 @@ import pollsRoutes from "./src/routes/polls.js"
 import cookieParser from "cookie-parser";
 import userRoutes from "./src/routes/user.js"
 import pollAnswerRoutes from "./src/routes/pollAnswers.js"
+import sessionRoutes from "./src/routes/session.js";
 
 dotenv.config();
 const app = express();
@@ -18,9 +19,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
-app.use("/api/users", userRoutes)
+app.use("/api/users", userRoutes);
 app.use("/api/polls", pollsRoutes);
 app.use("/api/pollsAnswer", pollAnswerRoutes);
+app.use("/api/session", sessionRoutes);
 
 app.use(errorHandler);
 
