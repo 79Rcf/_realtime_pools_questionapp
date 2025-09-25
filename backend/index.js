@@ -1,21 +1,70 @@
-import express from 'express';
-import userRoutes from './src/routes/userRoutes.js'
-import morgan from 'morgan';
-const app = express()
-app.use(express.json());
-app.use('/users', userRoutes)
-app.use(morgan("dev"));
+import express from "express";
+import dotenv from "dotenv";
+import morgan from "morgan";
+import http from "http";
+import { Server } from "socket.io"; // <-- FIXED: import Server, not server
 
-app.use("users", userRoutes);
+import authRoutes from "./src/routes/auth.js";
+import errorHandler from "./src/middlewares/errorHandler.js";
+import pollsRoutes from "./src/routes/polls.js";
+import cookieParser from "cookie-parser";
+import userRoutes from "./src/routes/user.js";
+import pollAnswerRoutes from "./src/routes/pollAnswers.js";
+import sessionRoutes from "./src/routes/session.js";
+import participantsRoutes from "./src/routes/participants.js";
 
-app.use((err, req, res, next)=> {
-    console.error("Error:", err.message);
-    res.status(500).json({ error: err.message });
+dotenv.config();
+
+const app = express();
+
+// Create HTTP server
+const server = http.createServer(app);
+
+// Initialize Socket.IO
+const io = new Server(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"],
+    },
 });
 
-const port = process.env.PORT || 3000
+// Attach io to app so it can be accessed in routes
+app.set("io", io);
 
-app.get('/', (req, res) => res.send('Hello World!'))
+// Socket.IO connection
+io.on("connection", (socket) => {
+    console.log("New client connected:", socket.id);
 
-app.listen(port, () => 
-console.log(`app listening on port ${port}!`))
+    socket.on("sendData", (data) => {
+        console.log("Data received:", data);
+        io.emit("receiver", data);
+    });
+
+    socket.on("disconnect", () => {
+        console.log("Client disconnected:", socket.id);
+    });
+});
+
+// Middleware
+app.use(express.json());
+app.use(morgan("dev"));
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+
+// Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/polls", pollsRoutes);
+app.use("/api/pollsAnswer", pollAnswerRoutes);
+app.use("/api/sessions", sessionRoutes);
+app.use("/api/participants", participantsRoutes);
+
+// Error handler
+app.use(errorHandler);
+
+// Test route
+app.get("/", (req, res) => res.send("API running..."));
+
+// Start server with Socket.IO
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -1,8 +1,142 @@
-POST http://localhost:3000/users/login
+###########################
+## 1. AUTHENTICATION
+###########################
+
+### Sign Up
+POST http://localhost:3000/api/auth/signUp
 Content-Type: application/json
 
 {
-  "name": "Ulrich",
-  "email": "ulrich@example.com",
-  "password": "mypassword"
+  "username": "sir",
+  "email": "sir@example.com",
+  "password": "secret123"
 }
+
+### Sign In
+POST http://localhost:3000/api/auth/signIn
+Content-Type: application/json
+
+{
+  "email": "sir@example.com",
+  "password": "secret123"
+}
+
+### Sign Out
+POST http://localhost:3000/api/auth/signOut
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImVtYWlsIjoic2lyQGV4YW1wbGUuY29tIiwiaWF0IjoxNzU4NzUxMTU3LCJleHAiOjE3NTg4Mzc1NTd9.CgjmnKc2W7a0tbFZlTBJLlPXYx5Jn1J4cQxdtbkf5Tg
+
+###########################
+## 2. POLLS
+###########################
+
+### Create Poll (Draft)
+POST http://localhost:3000/api/polls
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImVtYWlsIjoic2lyQGV4YW1wbGUuY29tIiwiaWF0IjoxNzU4NzUxMTU3LCJleHAiOjE3NTg4Mzc1NTd9.CgjmnKc2W7a0tbFZlTBJLlPXYx5Jn1J4cQxdtbkf5Tg
+
+{
+  "question": "what do we study in rebase code camp?",
+  "options": ["JavaScript", "Python", "Go"],
+  "session_id": 1
+}
+
+### Update Poll
+PUT http://localhost:3000/api/polls/20
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImVtYWlsIjoic2lyQGV4YW1wbGUuY29tIiwiaWF0IjoxNzU4NzUxMTU3LCJleHAiOjE3NTg4Mzc1NTd9.CgjmnKc2W7a0tbFZlTBJLlPXYx5Jn1J4cQxdtbkf5Tg
+
+{
+  "question": "Updated question?",
+  "options": ["Option3", "Option2"]
+}
+
+### Publish Poll
+PATCH http://localhost:3000/api/polls/20/publish
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImVtYWlsIjoic2lyQGV4YW1wbGUuY29tIiwiaWF0IjoxNzU4NzUxMTU3LCJleHAiOjE3NTg4Mzc1NTd9.CgjmnKc2W7a0tbFZlTBJLlPXYx5Jn1J4cQxdtbkf5Tg
+
+### Hide Poll
+PATCH http://localhost:3000/api/polls/20/hide
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImVtYWlsIjoic2lyQGV4YW1wbGUuY29tIiwiaWF0IjoxNzU4NzUxMTU3LCJleHAiOjE3NTg4Mzc1NTd9.CgjmnKc2W7a0tbFZlTBJLlPXYx5Jn1J4cQxdtbkf5Tg
+
+### Complete Poll
+PATCH http://localhost:3000/api/polls/11/complete
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImVtYWlsIjoic2lyQGV4YW1wbGUuY29tIiwiaWF0IjoxNzU4NzIzODU2LCJleHAiOjE3NTg4MTAyNTZ9.F9Xw_RZUXrF8HCX63OoqG80Ze24fKMre5DMwBtSIUII
+
+### Get All Polls
+GET http://localhost:3000/api/polls/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImVtYWlsIjoic2lyQGV4YW1wbGUuY29tIiwiaWF0IjoxNzU4NzIzODU2LCJleHAiOjE3NTg4MTAyNTZ9.F9Xw_RZUXrF8HCX63OoqG80Ze24fKMre5DMwBtSIUII
+### Get Poll by ID (completed only)
+GET http://localhost:3000/api/polls/20/?status=draft
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImVtYWlsIjoic2lyQGV4YW1wbGUuY29tIiwiaWF0IjoxNzU4NzIzODU2LCJleHAiOjE3NTg4MTAyNTZ9.F9Xw_RZUXrF8HCX63OoqG80Ze24fKMre5DMwBtSIUII
+
+### Get Poll by ID (any status)
+GET http://localhost:3000/api/polls/20
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImVtYWlsIjoic2lyQGV4YW1wbGUuY29tIiwiaWF0IjoxNzU4NzIzODU2LCJleHAiOjE3NTg4MTAyNTZ9.F9Xw_RZUXrF8HCX63OoqG80Ze24fKMre5DMwBtSIUII
+
+
+### Create Session
+POST http://localhost:3000/api/sessions/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImVtYWlsIjoic2lyQGV4YW1wbGUuY29tIiwiaWF0IjoxNzU4NzgyMTQ1LCJleHAiOjE3NTg4Njg1NDV9.tttaWZkcoNHNFlMYRhJCI2NAx2PyEK1V53cx5jGds_M
+
+{
+  "host_id": "20"
+}
+
+
+### Get published polls in session
+GET http://localhost:3000/api/sessions/1/polls?status=published
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImVtYWlsIjoic2lyQGV4YW1wbGUuY29tIiwiaWF0IjoxNzU4NzgyMTQ1LCJleHAiOjE3NTg4Njg1NDV9.tttaWZkcoNHNFlMYRhJCI2NAx2PyEK1V53cx5jGds_M
+
+
+###########################
+## 3. POLL ANSWERS / PARTICIPANTS
+###########################
+
+
+### join session
+POST http://localhost:3000/api/participants/29/join
+Content-Type: application/json
+
+ {
+  "name": "John Doe",
+  "phone": "123456789"
+}
+
+### Get Participants answer from Poll
+
+POST http://localhost:3000/api/pollsAnswer/20/answer
+Content-Type: application/json
+
+{
+  "participant_id": 2,
+  "answer": "Python"
+}
+
+
+### creating a new poll 
+POST http://localhost:3000/api/polls
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImVtYWlsIjoic2lyQGV4YW1wbGUuY29tIiwiaWF0IjoxNzU4NzgyMTQ1LCJleHAiOjE3NTg4Njg1NDV9.tttaWZkcoNHNFlMYRhJCI2NAx2PyEK1V53cx5jGds_M
+Content-Type: application/json
+
+{
+  "question": "Which programming language do you prefer?",
+  "options": ["Python", "JavaScript"],
+  "session_id": 29
+}
+
+### publish poll
+
+PATCH http://localhost:3000/api/polls/23/publish
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImVtYWlsIjoic2lyQGV4YW1wbGUuY29tIiwiaWF0IjoxNzU4NzUxMTU3LCJleHAiOjE3NTg4Mzc1NTd9.CgjmnKc2W7a0tbFZlTBJLlPXYx5Jn1J4cQxdtbkf5Tg
+
+
+### participant submit thier polls 
+POST http://localhost:3000/api/pollsAnswer/23/answer
+Content-Type: application/json
+
+{
+  "participant_id": 2,
+  "answer": "Python"
+}
+
