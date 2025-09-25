@@ -11,8 +11,8 @@ export const qstashClient = new Client({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ test: "QStash connected" }),
     });
-    console.log("✅ Upstash connected and test message sent");
+    console.log(" Upstash connected and test message sent");
   } catch (err) {
-    console.error("❌ Upstash connection error:", err.message);
+    console.error(" Upstash connection error:", err.message);
   }
 })();
