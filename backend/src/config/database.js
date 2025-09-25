@@ -16,11 +16,11 @@ const connection = new Pool({
   idleTimeoutMillis: 30000, // 30 seconds
 });
 
-// ✅ Test connection at startup
+//  Test connection at startup
 (async function testConnection() {
-  try {
+  try { 
     const client = await connection.connect();
-    console.log("✅ Connected to PostgreSQL database");
+    console.log("Connected to PostgreSQL database");
     client.release();
   } catch (err) {
     console.error("❌ Database connection error:");
