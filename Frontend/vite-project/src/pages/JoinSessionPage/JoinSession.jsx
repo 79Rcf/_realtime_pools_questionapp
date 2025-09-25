@@ -37,7 +37,7 @@ const JoinSession = () => {
 
   return (
     <div>
-      <h2>Join a Session</h2>
+      <h2>Join a Session..</h2>
 
       {!isHost ? (
         <>
