@@ -19,13 +19,13 @@ router.post("/", protect, createPoll);
 router.put("/:id", protect, updatePoll);
 
 // Host publishes a poll
-router.put("/:id/publish", protect, publishPoll);
+router.patch("/:id/publish", protect, publishPoll);
 
 // Host hides a poll
-router.put("/:id/hide", protect, hidePoll);
+router.patch("/:id/hide", protect, hidePoll);
 
 // Host completes a poll
-router.put("/:id/complete", protect, completePoll);
+router.patch("/:id/complete", protect, completePoll);
 
 // Get all polls (optional filter by status)
 router.get("/", protect, getPolls);

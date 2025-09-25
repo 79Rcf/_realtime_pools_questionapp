@@ -1,6 +1,8 @@
 import connection from "../config/database.js";
+import { qstashClient } from "../config/qstash.js";   
+import { CHANNEL } from "../config/notifications.js";
 
-// Create Poll (draft by default)
+// -------------------- CREATE POLL --------------------
 export const createPoll = async (req, res, next) => {
   try {
     const { question, options, session_id } = req.body;
@@ -21,7 +23,7 @@ export const createPoll = async (req, res, next) => {
   }
 };
 
-// Update Poll (only draft or hidden)
+// -------------------- UPDATE POLL --------------------
 export const updatePoll = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -33,7 +35,9 @@ export const updatePoll = async (req, res, next) => {
 
     const poll = pollQuery.rows[0];
     if (poll.host_id !== host_id) return res.status(403).json({ error: "Not authorized" });
-    if (!["draft", "hidden"].includes(poll.status)) return res.status(400).json({ error: "Poll cannot be updated after published" });
+    if (!["draft", "hidden"].includes(poll.status)) {
+      return res.status(400).json({ error: "Poll cannot be updated after published" });
+    }
 
     const updated = await connection.query(
       "UPDATE polls SET question=$1, options=$2, updated_at=NOW() WHERE id=$3 RETURNING *",
@@ -46,16 +50,16 @@ export const updatePoll = async (req, res, next) => {
   }
 };
 
-// Publish Poll
+// -------------------- PUBLISH POLL (with QStash notification) --------------------
 export const publishPoll = async (req, res, next) => {
   try {
     const { id } = req.params;
     const host_id = req.user.id;
 
     const pollQuery = await connection.query("SELECT * FROM polls WHERE id=$1", [id]);
-    if (pollQuery.rows.length === 0) return res.status(404).json({ error: "Poll not found" });
-    const poll = pollQuery.rows[0];
+    if (!pollQuery.rows.length) return res.status(404).json({ error: "Poll not found" });
 
+    const poll = pollQuery.rows[0];
     if (poll.host_id !== host_id) return res.status(403).json({ error: "Not authorized" });
     if (poll.status === "completed") return res.status(400).json({ error: "Poll already completed" });
 
@@ -64,22 +68,36 @@ export const publishPoll = async (req, res, next) => {
       [id]
     );
 
+    const io = req.app.get("io");
+    io.to(`session_${poll.session_id}`).emit("pollPublished", result.rows[0]);
+  
+    await qstashClient.publish({
+      url: "https://your-server.com/api/notifications", // your notification endpoint
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        poll_id: result.rows[0].id,
+        session_id: result.rows[0].session_id,
+        question: result.rows[0].question,
+      }),
+    });
+
+    console.log(`QStash notification sent on channel: ${CHANNEL}`);
     res.json({ message: "Poll published", poll: result.rows[0] });
   } catch (err) {
     next(err);
   }
 };
 
-// Hide Poll
+// -------------------- HIDE POLL --------------------
 export const hidePoll = async (req, res, next) => {
   try {
     const { id } = req.params;
     const host_id = req.user.id;
 
     const pollQuery = await connection.query("SELECT * FROM polls WHERE id=$1", [id]);
-    if (pollQuery.rows.length === 0) return res.status(404).json({ error: "Poll not found" });
-    const poll = pollQuery.rows[0];
+    if (!pollQuery.rows.length) return res.status(404).json({ error: "Poll not found" });
 
+    const poll = pollQuery.rows[0];
     if (poll.host_id !== host_id) return res.status(403).json({ error: "Not authorized" });
 
     const result = await connection.query(
@@ -93,16 +111,16 @@ export const hidePoll = async (req, res, next) => {
   }
 };
 
-// Complete Poll
+// -------------------- COMPLETE POLL --------------------
 export const completePoll = async (req, res, next) => {
   try {
     const { id } = req.params;
     const host_id = req.user.id;
 
     const pollQuery = await connection.query("SELECT * FROM polls WHERE id=$1", [id]);
-    if (pollQuery.rows.length === 0) return res.status(404).json({ error: "Poll not found" });
-    const poll = pollQuery.rows[0];
+    if (!pollQuery.rows.length) return res.status(404).json({ error: "Poll not found" });
 
+    const poll = pollQuery.rows[0];
     if (poll.host_id !== host_id) return res.status(403).json({ error: "Not authorized" });
 
     const result = await connection.query(
@@ -116,16 +134,23 @@ export const completePoll = async (req, res, next) => {
   }
 };
 
-// Get all polls (optionally filter by status)
+// -------------------- GET POLLS --------------------
 export const getPolls = async (req, res, next) => {
   try {
     const { status } = req.query;
-    let query = "SELECT * FROM polls";
-    let params = [];
+    const userId = req.user.id;
 
-    if (status) {
-      query += " WHERE status=$1";
-      params.push(status);
+    let query;
+    let params;
+
+    if (req.user.role === "host") {
+      query = status
+        ? "SELECT * FROM polls WHERE host_id=$1 AND status=$2"
+        : "SELECT * FROM polls WHERE host_id=$1";
+      params = status ? [userId, status] : [userId];
+    } else {
+      query = "SELECT * FROM polls WHERE status='published'";
+      params = [];
     }
 
     const result = await connection.query(query, params);
@@ -135,32 +160,48 @@ export const getPolls = async (req, res, next) => {
   }
 };
 
-// Get single poll
+// -------------------- GET SINGLE POLL --------------------
 export const getPollById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const result = await connection.query("SELECT * FROM polls WHERE id=$1", [id]);
-    if (result.rows.length === 0) return res.status(404).json({ error: "Poll not found" });
-    res.json({ poll: result.rows[0] });
-  } catch (err) {
-    next(err);
-  }
-};// Get all published polls for a specific session
-export const getSessionPolls = async (req, res, next) => {
-  try {
-    const { session_id } = req.params;
-    const result = await connection.query(
-      "SELECT * FROM polls WHERE session_id=$1 AND status='published'",
-      [session_id]
-    );
+    const userId = req.user.id;
 
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: "No published polls found for this session" });
+    const pollQuery = await connection.query("SELECT * FROM polls WHERE id=$1", [id]);
+    if (!pollQuery.rows.length) return res.status(404).json({ error: "Poll not found" });
+
+    const poll = pollQuery.rows[0];
+
+    if (req.user.role === "host") {
+      if (poll.host_id !== userId) return res.status(403).json({ error: "Not authorized" });
+      return res.json({ poll });
+    } else {
+      if (poll.status !== "published") return res.status(403).json({ error: "This poll is not available" });
+      return res.json({ poll });
     }
-
-    res.status(200).json({ polls: result.rows });
   } catch (err) {
     next(err);
   }
 };
 
+// -------------------- GET POLLS FOR A SESSION --------------------
+export const getSessionPolls = async (req, res, next) => {
+  try {
+    const { sessions_id } = req.params;
+    const { status } = req.query;
+
+    let query = "SELECT * FROM polls WHERE session_id=$1";
+    let params = [sessions_id];
+
+    if (status) {
+      query += " AND status=$2";
+      params.push(status);
+    }
+
+    const result = await connection.query(query, params);
+    if (!result.rows.length) return res.status(404).json({ error: "No polls found for this session" });
+
+    res.json({ polls: result.rows });
+  } catch (err) {
+    next(err);
+  }
+};

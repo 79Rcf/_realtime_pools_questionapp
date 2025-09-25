@@ -1,5 +1,6 @@
 // controllers/participantsController.js
 import connection from "../config/database.js";
+import { submitAnswer } from "./pollAnswersController.js";
 
 export const joinSession = async (req, res, next) => {
   try {
@@ -20,6 +21,13 @@ export const joinSession = async (req, res, next) => {
       "INSERT INTO participants (session_id, name, phone) VALUES ($1, $2, $3) RETURNING *",
       [session_id, name, phone || null]
     );
+    
+    const io = req.app.get("io");
+    io.to(`session_${poll.session_id}`).emit("pollAnswered", {
+      poll_id: poll.id,
+      participant_id: participant.id,
+      answer: submitAnswer,
+    })
 
     res.status(201).json({
       message: "Joined session",
