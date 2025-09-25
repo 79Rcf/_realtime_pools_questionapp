@@ -21,7 +21,7 @@ export const joinSession = async (req, res, next) => {
       "INSERT INTO participants (session_id, name, phone) VALUES ($1, $2, $3) RETURNING *",
       [session_id, name, phone || null]
     );
-    
+      
     const io = req.app.get("io");
     io.to(`session_${poll.session_id}`).emit("pollAnswered", {
       poll_id: poll.id,
