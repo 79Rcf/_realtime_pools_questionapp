@@ -1,7 +1,5 @@
-// src/controllers/polls.js
-
-import connection from "../config/database.js"; // ✅ only once
-import { qstashClient } from "../config/qstash.js";   // QStash client
+import connection from "../config/database.js";
+import { qstashClient } from "../config/qstash.js";   
 import { CHANNEL } from "../config/notifications.js";
 
 // -------------------- CREATE POLL --------------------
@@ -70,7 +68,9 @@ export const publishPoll = async (req, res, next) => {
       [id]
     );
 
-    // Send QStash notification to participants
+    const io = req.app.get("io");
+    io.to(`session_${poll.session_id}`).emit("pollPublished", result.rows[0]);
+  
     await qstashClient.publish({
       url: "https://your-server.com/api/notifications", // your notification endpoint
       headers: { "Content-Type": "application/json" },
