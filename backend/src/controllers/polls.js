@@ -1,6 +1,10 @@
-import connection from "../config/database.js";
+// src/controllers/polls.js
 
-// Create Poll (draft by default)
+import connection from "../config/database.js"; // ✅ only once
+import { qstashClient } from "../config/qstash.js";   // QStash client
+import { CHANNEL } from "../config/notifications.js";
+
+// -------------------- CREATE POLL --------------------
 export const createPoll = async (req, res, next) => {
   try {
     const { question, options, session_id } = req.body;
@@ -21,7 +25,7 @@ export const createPoll = async (req, res, next) => {
   }
 };
 
-// Update Poll (only draft or hidden)
+// -------------------- UPDATE POLL --------------------
 export const updatePoll = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -48,14 +52,14 @@ export const updatePoll = async (req, res, next) => {
   }
 };
 
-// Publish Poll
+// -------------------- PUBLISH POLL (with QStash notification) --------------------
 export const publishPoll = async (req, res, next) => {
   try {
     const { id } = req.params;
     const host_id = req.user.id;
 
     const pollQuery = await connection.query("SELECT * FROM polls WHERE id=$1", [id]);
-    if (pollQuery.rows.length === 0) return res.status(404).json({ error: "Poll not found" });
+    if (!pollQuery.rows.length) return res.status(404).json({ error: "Poll not found" });
 
     const poll = pollQuery.rows[0];
     if (poll.host_id !== host_id) return res.status(403).json({ error: "Not authorized" });
@@ -66,20 +70,32 @@ export const publishPoll = async (req, res, next) => {
       [id]
     );
 
+    // Send QStash notification to participants
+    await qstashClient.publish({
+      url: "https://your-server.com/api/notifications", // your notification endpoint
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        poll_id: result.rows[0].id,
+        session_id: result.rows[0].session_id,
+        question: result.rows[0].question,
+      }),
+    });
+
+    console.log(`QStash notification sent on channel: ${CHANNEL}`);
     res.json({ message: "Poll published", poll: result.rows[0] });
   } catch (err) {
     next(err);
   }
 };
 
-// Hide Poll
+// -------------------- HIDE POLL --------------------
 export const hidePoll = async (req, res, next) => {
   try {
     const { id } = req.params;
     const host_id = req.user.id;
 
     const pollQuery = await connection.query("SELECT * FROM polls WHERE id=$1", [id]);
-    if (pollQuery.rows.length === 0) return res.status(404).json({ error: "Poll not found" });
+    if (!pollQuery.rows.length) return res.status(404).json({ error: "Poll not found" });
 
     const poll = pollQuery.rows[0];
     if (poll.host_id !== host_id) return res.status(403).json({ error: "Not authorized" });
@@ -95,14 +111,14 @@ export const hidePoll = async (req, res, next) => {
   }
 };
 
-// Complete Poll
+// -------------------- COMPLETE POLL --------------------
 export const completePoll = async (req, res, next) => {
   try {
     const { id } = req.params;
     const host_id = req.user.id;
 
     const pollQuery = await connection.query("SELECT * FROM polls WHERE id=$1", [id]);
-    if (pollQuery.rows.length === 0) return res.status(404).json({ error: "Poll not found" });
+    if (!pollQuery.rows.length) return res.status(404).json({ error: "Poll not found" });
 
     const poll = pollQuery.rows[0];
     if (poll.host_id !== host_id) return res.status(403).json({ error: "Not authorized" });
@@ -118,6 +134,7 @@ export const completePoll = async (req, res, next) => {
   }
 };
 
+// -------------------- GET POLLS --------------------
 export const getPolls = async (req, res, next) => {
   try {
     const { status } = req.query;
@@ -127,16 +144,11 @@ export const getPolls = async (req, res, next) => {
     let params;
 
     if (req.user.role === "host") {
-      // Hosts can see all their polls
-      if (status) {
-        query = "SELECT * FROM polls WHERE host_id=$1 AND status=$2";
-        params = [userId, status];
-      } else {
-        query = "SELECT * FROM polls WHERE host_id=$1";
-        params = [userId];
-      }
+      query = status
+        ? "SELECT * FROM polls WHERE host_id=$1 AND status=$2"
+        : "SELECT * FROM polls WHERE host_id=$1";
+      params = status ? [userId, status] : [userId];
     } else {
-      // Participants only see published polls
       query = "SELECT * FROM polls WHERE status='published'";
       params = [];
     }
@@ -148,28 +160,22 @@ export const getPolls = async (req, res, next) => {
   }
 };
 
-// Get single poll (with access control)
+// -------------------- GET SINGLE POLL --------------------
 export const getPollById = async (req, res, next) => {
   try {
     const { id } = req.params;
     const userId = req.user.id;
 
     const pollQuery = await connection.query("SELECT * FROM polls WHERE id=$1", [id]);
-    if (pollQuery.rows.length === 0) return res.status(404).json({ error: "Poll not found" });
+    if (!pollQuery.rows.length) return res.status(404).json({ error: "Poll not found" });
 
     const poll = pollQuery.rows[0];
 
     if (req.user.role === "host") {
-      // Hosts can only view their own polls
-      if (poll.host_id !== userId) {
-        return res.status(403).json({ error: "Not authorized" });
-      }
+      if (poll.host_id !== userId) return res.status(403).json({ error: "Not authorized" });
       return res.json({ poll });
     } else {
-      // Participants only see published polls
-      if (poll.status !== "published") {
-        return res.status(403).json({ error: "This poll is not available" });
-      }
+      if (poll.status !== "published") return res.status(403).json({ error: "This poll is not available" });
       return res.json({ poll });
     }
   } catch (err) {
@@ -177,7 +183,7 @@ export const getPollById = async (req, res, next) => {
   }
 };
 
-// ✅ Get polls for a specific session (optionally filter by status)
+// -------------------- GET POLLS FOR A SESSION --------------------
 export const getSessionPolls = async (req, res, next) => {
   try {
     const { sessions_id } = req.params;
@@ -192,9 +198,7 @@ export const getSessionPolls = async (req, res, next) => {
     }
 
     const result = await connection.query(query, params);
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: "No polls found for this session" });
-    }
+    if (!result.rows.length) return res.status(404).json({ error: "No polls found for this session" });
 
     res.json({ polls: result.rows });
   } catch (err) {
