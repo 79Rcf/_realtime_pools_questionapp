@@ -7,7 +7,7 @@ export const createSession = async (req, res, next) => {
   try {
     const hostId = req.user.id; // comes from JWT (protect middleware)
 
-    // Generate random 6-char code
+    // Generate random 6-char code§ 1
     const code = crypto.randomBytes(3).toString("hex").toUpperCase();
 
     const join_link = `${process.env.BASE_URL || "http://localhost:3000"}/join/${code}`;
@@ -23,7 +23,7 @@ export const createSession = async (req, res, next) => {
       session: result.rows[0],
     });
   } catch (err) {
-    console.error("💥 Create Session Error:", err);
+    console.error(" Create Session Error:", err);
     next(err);
   }
 };

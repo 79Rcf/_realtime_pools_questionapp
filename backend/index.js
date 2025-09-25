@@ -1,4 +1,4 @@
-import express from "express";
+ import express from "express";
 import dotenv from "dotenv";
 import morgan from "morgan";
 import authRoutes from "./src/routes/auth.js";
@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import userRoutes from "./src/routes/user.js"
 import pollAnswerRoutes from "./src/routes/pollAnswers.js"
 import sessionRoutes from "./src/routes/session.js";
+import participantsRoutes from "./src/routes/participants.js"
 
 dotenv.config();
 const app = express();
@@ -22,7 +23,10 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/polls", pollsRoutes);
 app.use("/api/pollsAnswer", pollAnswerRoutes);
-app.use("/api/session", sessionRoutes);
+app.use("/api/sessions", sessionRoutes);
+app.use("/api/participants", participantsRoutes);
+
+
 
 app.use(errorHandler);
 
