@@ -22,12 +22,12 @@ export const joinSession = async (req, res, next) => {
       [session_id, name, phone || null]
     );
       
-    const io = req.app.get("io");
+  /*   const io = req.app.get("io");
     io.to(`session_${poll.session_id}`).emit("pollAnswered", {
       poll_id: poll.id,
       participant_id: participant.id,
       answer: submitAnswer,
-    })
+    }) */
 
     res.status(201).json({
       message: "Joined session",

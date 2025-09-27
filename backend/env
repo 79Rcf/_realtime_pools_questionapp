@@ -1,0 +1,12 @@
+PORT=3000
+
+DB_USER=postgres
+DB_PASSWORD=1234
+DB_HOST=localhost
+DB_PORT=8383
+DB_NAME=realtime_polling
+JWT_SECRET=myverysecretkey
+JWT_EXPIRES_IN=1d
+
+NODE_ENV_FRONTEDN= http://localhost:5173/
+NODE="development"

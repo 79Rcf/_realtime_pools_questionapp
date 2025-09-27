@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import morgan from "morgan";
 import http from "http";
 import { Server } from "socket.io"; // <-- FIXED: import Server, not server
+import cors from "cors"
+
 
 import authRoutes from "./src/routes/auth.js";
 import errorHandler from "./src/middlewares/errorHandler.js";
@@ -34,6 +36,9 @@ const io = new Server(server, {
 
 // Attach io to app so it can be accessed in routes
 app.set("io", io);
+
+// cors
+app.use(cors());
 
 // Socket.IO connection
 io.on("connection", (socket) => {

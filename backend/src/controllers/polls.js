@@ -71,7 +71,7 @@ export const publishPoll = async (req, res, next) => {
     const io = req.app.get("io");
     io.to(`session_${poll.session_id}`).emit("pollPublished", result.rows[0]);
   
-    await qstashClient.publish({
+    /* await qstashClient.publish({
       url: "https://your-server.com/api/notifications", // your notification endpoint
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -80,7 +80,7 @@ export const publishPoll = async (req, res, next) => {
         question: result.rows[0].question,
       }),
     });
-
+ */
     console.log(`QStash notification sent on channel: ${CHANNEL}`);
     res.json({ message: "Poll published", poll: result.rows[0] });
   } catch (err) {
