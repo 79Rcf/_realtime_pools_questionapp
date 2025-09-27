@@ -14,6 +14,10 @@ import sessionRoutes from "./src/routes/session.js";
 import participantsRoutes from "./src/routes/participants.js";
 
 dotenv.config();
+console.log("JWT_SECRET:", process.env.JWT_SECRET);
+console.log("JWT_EXPIRES_IN:", process.env.JWT_EXPIRES_IN);
+
+
 
 const app = express();
 

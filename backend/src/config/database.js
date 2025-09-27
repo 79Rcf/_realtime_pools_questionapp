@@ -11,7 +11,7 @@ const connection = new Pool({
   host: process.env.DB_HOST || "localhost",
   database: process.env.DB_NAME || process.env.DB_DATABASE || "realtime_polling",
   password: process.env.DB_PASSWORD || "",
-  port: parseInt(process.env.DB_PORT, 10) || 5432,
+  port: parseInt(process.env.DB_PORT, 10) || 8383,
   max: 10,           // max connections in pool
   idleTimeoutMillis: 30000, // 30 seconds
 });
