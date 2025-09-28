@@ -1,18 +1,8 @@
-// import { StrictMode } from 'react'
-// import { createRoot } from 'react-dom/client'
-// import './index.css'
-// import App from './App.jsx'
-
-// createRoot(document.getElementById('root')).render(
-//   <StrictMode>
-//     <App />
-//   </StrictMode>,
-// )
-
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { SocketProvider } from './context/SocketContext';
+import './index.css'; // <-- import Tailwind CSS here
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
