@@ -38,8 +38,8 @@ const io = new Server(server, {
 app.set("io", io);
 
 // cors
-app.use(cors());
-
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(express.json())
 // Socket.IO connection
 io.on("connection", (socket) => {
     console.log("New client connected:", socket.id);
