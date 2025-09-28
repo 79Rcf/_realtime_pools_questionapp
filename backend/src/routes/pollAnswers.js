@@ -1,10 +1,12 @@
 // routes/pollAnswers.js
 import express from "express";
 import { submitAnswer } from "../controllers/pollAnswersController.js";
+import { protect } from "../middlewares/authMiddleware.js"
 
 const router = express.Router();
 
-// Participant submits an answer to a poll
-router.post("/:poll_id/answer", submitAnswer);
+
+router.post("/:poll_id/answer", protect, submitAnswer);
+
 
 export default router;
