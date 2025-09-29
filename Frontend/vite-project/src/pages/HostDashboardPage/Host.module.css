@@ -1,0 +1,392 @@
+/* --- CSS Variables for Easy Theming --- */
+:root {
+    --color-primary: #007bff; /* Blue for primary accents (e.g., active link, buttons) */
+    --color-secondary: #f0f2f5; /* Light gray for side panels */
+    --color-text: #333;
+    --color-border: #ddd;
+    --sidebar-width: 250px;
+    --right-panel-width: 300px;
+}
+
+/* ---------------------------------- */
+/* --- 1. App Container and Layout --- */
+/* ---------------------------------- */
+
+.appContainer {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Takes full viewport height */
+    font-family: Arial, sans-serif;
+    background-color: #fff;
+}
+
+.topBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--color-border);
+    background-color: #fff;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Flex container for the three main columns */
+.mainLayout {
+    display: flex;
+    flex: 1; /* Ensures it stretches to fill remaining height */
+}
+
+/* ---------------------------------- */
+/* --- 2. Left Sidebar Styling --- */
+/* ---------------------------------- */
+
+
+.dashboardContainer {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Header (Top Bar) */
+  .topBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 20px;
+    background-color: #fff;
+    color: #000;
+  }
+  
+  /* Layout with sidebar and main content */
+  .mainLayout {
+    display: flex;
+    flex: 1;
+  }
+  
+  /* Sidebar */
+  .sidebar {
+    width: 250px;
+    background-color: #ffff;
+    color: #fff;
+    transition: width 0.3s ease;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+
+  }
+  
+  .sidebarClosed {
+    width: 0;
+    
+  }
+  
+  .sidebar__back {
+    padding: 15px 20px;
+    cursor: pointer;
+    font-weight: bold;
+    background-color: #fff;
+    border-bottom: 1px solid #374151;
+    user-select: none;
+  }
+  
+  .sidebar__menu {
+    display: flex;
+    flex-direction: column;
+    padding-top: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-right: 5px;
+  }
+  
+  .sidebar__item {
+    padding: 12px 20px;
+    background: none;
+    border: none;
+    text-align: left;
+    color: #d1d5db;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.2s, color 0.2s;
+  }
+  
+  .sidebar__item:hover {
+    background-color: #374151;
+    color: #fff;
+  }
+  
+  .sidebar__itemActive {
+    background-color: #2563eb;
+    color: #fff;
+    font-weight: bold;
+  }
+  
+  /* Main content */
+  .mainContent {
+    flex: 1;
+    padding: 20px;
+    background-color: #f3f4f6;
+    overflow-y: auto;
+  }
+  
+
+
+/* HostDashboard.module.css */
+
+/* Container holding sidebar + main content */
+.dashboardContainer {
+    display: flex;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Sidebar styling */
+  .sidebar {
+    width: 250px;                /* full width when open */  /* dark gray */
+    color: #000000;
+    transition: width 0.3s ease;
+    overflow: hidden;            /* hide content when closed */
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Closed sidebar */
+  .sidebarClosed {
+    width: 0;
+  }
+  
+  /* Back button */
+  .sidebar__back {
+    padding: 15px 20px;
+    cursor: pointer;
+    font-weight: bold;
+    user-select: none;
+    border-bottom: 1px solid #374151;
+  }
+  
+  /* Menu container */
+  .sidebar__menu {
+    display: flex;
+    flex-direction: column;
+    padding-top: 10px;
+  }
+  
+  /* Each menu button */
+  .sidebar__item {
+    padding: 12px 20px;
+    background: none;
+    border: none;
+    text-align: left;
+    color: #000000;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.2s, color 0.2s;
+  }
+  
+  .sidebar__item:hover {
+    background-color: #99a3b3;
+    color: #fff;
+  }
+  
+  /* Active menu item */
+  .sidebar__itemActive {  
+    color: #080808;
+    font-weight: bold;
+  }
+  
+  /* Main content area */
+  .mainContent {
+    flex: 1;                     /* take remaining space */
+    padding: 20px;
+    overflow-y: auto;
+  }
+  
+
+/* ---------------------------------- */
+/* --- 3. Main Content Styling --- */
+/* ---------------------------------- */
+
+.contentArea {
+    flex-grow: 1; /* Takes up all available horizontal space */
+    padding: 20px;
+    background-color: #fff;
+    overflow-y: auto;
+}
+
+.contentHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.contentHeader h1 {
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+.addContentButton {
+    background-color: var(--color-primary);
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.contentControls {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.contentControls label {
+    margin-left: 8px;
+    font-size: 0.9rem;
+}
+
+.pollList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+/* Note: The styling for individual .pollItem is in a separate CSS module 
+   (e.g., CreatePoll.module.css) as per React component best practice. */
+
+/* ---------------------------------- */
+/* --- 4. Right Panel Styling --- */
+/* ---------------------------------- */
+
+.rightPanel {
+    width: var(--right-panel-width);
+    border-left: 1px solid var(--color-border);
+    padding: 20px;
+    background-color: var(--color-secondary);
+    flex-shrink: 0;
+    overflow-y: auto;
+}
+
+.rightPanel__ready {
+    padding: 15px;
+    margin-bottom: 20px;
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.rightPanel__ready h2 {
+    font-size: 1.1rem;
+    margin-top: 0;
+}
+
+.rightPanel__scores {
+    background-color: #fff;
+    border-radius: 4px;
+    padding: 15px;
+}
+
+.rightPanel__scores h3 {
+    font-size: 1rem;
+    margin-top: 0;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+/* --- 5. Responsive Styling --- */
+@media (max-width: 1024px) {
+    /* Tablet and small laptop */
+    .mainLayout {
+        flex-direction: column;
+    }
+
+    .sidebar,
+    .rightPanel {
+        width: 100%;
+        border: none;
+        padding: 10px 0;
+    }
+
+    .contentArea {
+        padding: 15px;
+    }
+
+    .contentHeader h1 {
+        font-size: 1.5rem;
+    }
+
+    .addContentButton {
+        padding: 6px 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Mobile */
+    .topBar {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px;
+    }
+
+    .contentHeader {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .sidebar {
+        display: none; /* Hide sidebar, can be replaced with a hamburger menu */
+    }
+
+    .mainLayout {
+        flex-direction: column;
+    }
+
+    .contentArea {
+        padding: 10px;
+    }
+
+    .rightPanel {
+        width: 100%;
+        padding: 10px;
+        margin-top: 20px;
+    }
+
+    .contentHeader h1 {
+        font-size: 1.3rem;
+    }
+
+    .addContentButton {
+        width: 100%;
+        text-align: center;
+        padding: 8px 0;
+    }
+
+    .pollList li {
+        font-size: 0.9rem;
+        padding: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Small mobile devices */
+    .contentHeader h1 {
+        font-size: 1.1rem;
+    }
+
+    .addContentButton {
+        font-size: 0.9rem;
+    }
+
+    .pollList li {
+        font-size: 0.85rem;
+        padding: 6px;
+    }
+
+    .rightPanel__ready h2,
+    .rightPanel__scores h3 {
+        font-size: 0.9rem;
+    }
+}

@@ -9,8 +9,9 @@
 }
 
 body {
-  background: #0f0f17;
-  color: #fff;
+ background: #0f0f17; 
+ color: #fff; 
+  
 }
 
 /* ================= HEADER ================= */
@@ -139,6 +140,7 @@ body {
   align-items: center; /* vertically centers left & right sections */
   justify-content: space-between;
   gap: 40px;
+ 
 }
 
 /* Left Section */
@@ -306,14 +308,6 @@ body {
 }
 
 /* ================= FOOTER ================= */
-.footer {
-  text-align: center;
-  padding: 20px;
-  border-top: 1px solid #2c2c3a;
-  color: #888;
-  font-size: 14px;
-  margin-top: 60px;
-}
 
 
 /* ================= RESPONSIVE ================= */

@@ -14,18 +14,13 @@ const Home = () => {
 <h3 className={ styles.titleLeft }>Fast <span className={styles.tit}>Poll</span></h3>
                
                <div className={ styles.btn}>
-                <Link to="/CreatPolls">
-                 <button className={styles.tiltlebuttoncenter}>Creat Poll</button>
-                 </Link>
+               
 </div>
 </div>
 
                 
-               
-
-
                  <div className={styles.rightsbtn}>
-                 <Link to="/Publishpolls">
+                 <Link to="/dashboard">
                  <button className={ styles.publicpoll}>Public Polls</button>
                  </Link>
                  <span className={styles.seperate}></span>
@@ -46,7 +41,7 @@ const Home = () => {
           <div className={styles.container}>
             <div className={styles.leftsec}>
               <p className={styles.leftpara}>Create instant, real-time <span className={styles.para}>polls</span> for free</p>
-              <Link to={"/Creatpolls"}>
+              <Link to={"/dashboard"}>
               <button className={styles.button}>Create your poll now</button>
               </Link>
               <p className={styles.paralayout}>No registration require - it's 100% free takes less than a minute.</p>
@@ -124,10 +119,6 @@ const Home = () => {
             </div>
           </div>
          </section>
-
-      <footer className={styles.footer}>
-        <p>© 2025 Real-Time Polls. All rights reserved.</p>
-      </footer>
       </>
   );
 };
