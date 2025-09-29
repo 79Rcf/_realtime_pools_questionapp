@@ -1,104 +1,56 @@
-import React, { useState } from "react";
-import { useSocket } from "../../context/SocketContext";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useParams } from "react-router-dom";
+import API from "../../api/axiosInstance";
+import styles from "./JoinSession.module.css";
 
 const JoinSession = () => {
-  const [code, setCode] = useState("");
+  const { code } = useParams();
   const [name, setName] = useState("");
-  const [email, setEmail] = useState(""); // For host login
-  const [password, setPassword] = useState(""); // For host login
-  const [isHost, setIsHost] = useState(false);
-  const socket = useSocket();
-  const navigate = useNavigate();
+  const [phone, setPhone] = useState("");
+  const [userId, setUserId] = useState("");
+  const [message, setMessage] = useState("");
 
-  // Participant join
-  const handleParticipantJoin = (e) => {
-    e.preventDefault();
-    if (code && name) {
-      socket?.emit("join_session", { code, name, role: "participant" });
-      navigate("/participant", { state: { code, name } });
-    } else {
-      alert("Enter session code and name to join as participant");
-    }
-  };
+  const handleJoin = async () => {
+    try {
+      // 1️⃣ Get session by code
+      const sessionRes = await API.get(`/sessions/code/${code}`);
+      const session_id = sessionRes.data.session.id;
 
-  // Host login/join
-  const handleHostJoin = (e) => {
-    e.preventDefault();
-    if (email && password) {
-      // Here you would normally validate login via API
-      // For demo, we just navigate to dashboard
-      socket?.emit("join_session", { role: "host", email });
-      navigate("/dashboard", { state: { email } });
-    } else {
-      alert("Enter email and password to join as host");
+      // 2️⃣ Join session
+      const res = await API.post(`/participants/${session_id}/join`, {
+        user_id: parseInt(userId),
+        name,
+        phone,
+      });
+      setMessage(`✅ Joined session: ${res.data.participant.unique_code}`);
+    } catch (err) {
+      setMessage(err.response?.data?.error || "Error occurred");
     }
   };
 
   return (
-    <div>
-      <h2>Join a Session..</h2>
-
-      {!isHost ? (
-        <>
-          {/* Participant Form */}
-          <form>
-            <input
-              placeholder="Session Code"
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-            />
-            <input
-              placeholder="Your Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-            <div style={{ marginTop: "1rem" }}>
-              <button onClick={handleParticipantJoin} type="button">
-                Join as Participant
-              </button>
-              <button
-                onClick={() => setIsHost(true)}
-                type="button"
-                style={{ marginLeft: "1rem" }}
-              >
-                Join as Host
-              </button>
-            </div>
-          </form>
-        </>
-      ) : (
-        <>
-          {/* Host Form */}
-          <h3>Host Login</h3>
-          <form>
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <div style={{ marginTop: "1rem" }}>
-              <button onClick={handleHostJoin} type="button">
-                Login as Host
-              </button>
-              <button
-                onClick={() => setIsHost(false)}
-                type="button"
-                style={{ marginLeft: "1rem" }}
-              >
-                Back to Participant
-              </button>
-            </div>
-          </form>
-        </>
-      )}
+    <div className={styles.container}>
+      <h2>Join Session ({code})</h2>
+      <input
+        type="number"
+        placeholder="User ID (required)"
+        value={userId}
+        onChange={(e) => setUserId(e.target.value)}
+      />
+      <input
+        type="text"
+        placeholder="Name (required)"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+      />
+      <input
+        type="text"
+        placeholder="Phone (optional)"
+        value={phone}
+        onChange={(e) => setPhone(e.target.value)}
+      />
+      <button onClick={handleJoin}>Join Session</button>
+      {message && <p>{message}</p>}
     </div>
   );
 };

@@ -1,63 +1,53 @@
 import { useState } from "react";
-import { signUp } from "../../api/auth";
-import styles from "./SignUp.module.css";
+import API from "../../api/axiosInstance";
+import styles from "./Signup.module.css";
 
-const SignUp = () => {
-  const [form, setForm] = useState({ username: "", email: "", password: "" });
+const Signup = () => {
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await signUp(form);
-      setMessage(res.data.message || "Signed up successfully!");
+      const res = await API.post("/auth/signup", { username, email, password });
+      setMessage(res.data.message);
     } catch (err) {
-      setMessage(err.response?.data?.error || "Error signing up");
+      setMessage(err.response?.data?.error || "Error occurred");
     }
   };
 
   return (
     <div className={styles.container}>
-      <form className={styles.form} onSubmit={handleSubmit}>
-        <h2 className={styles.title}>Sign Up</h2>
-
+      <h2>Sign Up</h2>
+      <form onSubmit={handleSubmit} className={styles.form}>
         <input
           type="text"
-          name="username"
           placeholder="Username"
-          value={form.username}
-          onChange={handleChange}
-          className={styles.input}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
         />
         <input
           type="email"
-          name="email"
           placeholder="Email"
-          value={form.email}
-          onChange={handleChange}
-          className={styles.input}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
         />
         <input
           type="password"
-          name="password"
           placeholder="Password"
-          value={form.password}
-          onChange={handleChange}
-          className={styles.input}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
         />
-
-        <button type="submit" className={styles.button}>
-          Sign Up
-        </button>
-
-        {message && <p className={styles.message}>{message}</p>}
+        <button type="submit">Sign Up</button>
       </form>
+      {message && <p>{message}</p>}
     </div>
   );
 };
 
-export default SignUp;
+export default Signup;

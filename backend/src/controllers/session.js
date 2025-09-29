@@ -7,7 +7,7 @@ export const createSession = async (req, res, next) => {
   try {
     const hostId = req.user.id; // comes from JWT (protect middleware)
 
-    // Generate random 6-char code§ 1
+   
     const code = crypto.randomBytes(3).toString("hex").toUpperCase();
 
     const join_link = `${process.env.BASE_URL || "http://localhost:3000"}/join/${code}`;
@@ -25,5 +25,23 @@ export const createSession = async (req, res, next) => {
   } catch (err) {
     console.error(" Create Session Error:", err);
     next(err);
+  }
+};
+export const getSessionByCode = async (req, res) => {
+  const { code } = req.params;
+  try {
+    const result = await connection.query(
+      "SELECT * FROM sessions WHERE code=$1 AND status='active'",
+      [code]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Session not found or inactive" });
+    }
+
+    res.json({ session: result.rows[0] });
+  } catch (err) {
+    console.error("Get Session By Code Error:", err);
+    res.status(500).json({ error: "Server error" });
   }
 };

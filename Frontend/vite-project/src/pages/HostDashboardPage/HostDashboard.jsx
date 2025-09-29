@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { createPoll, getPolls, publishPoll } from "../../api/poll";
 
 const HostDashboard = () => {
   const [polls, setPolls] = useState([]);
