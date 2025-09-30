@@ -1,38 +1,205 @@
 .container {
-  max-width: 400px;
-  margin: 50px auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  text-align: center;
-}
-.form input {
-  width: 100%;
-  font-size: 16px;
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 10px;
-}
-.form button {
-  padding: 10px 20px;
-  cursor: pointer;
+  display: flex;
+  min-height: 100vh;
+  background-color: #0a0a0a;
+  position: relative;
+  overflow: hidden;
 }
 
-/* label {
+.leftPanel {
+  flex: 1;
+  background: linear-gradient(135deg, #6b46c1 0%, #8b5cf6 50%, #a78bfa 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 4rem;
+  position: relative;
+  border: 2px solid #7c3aed;
+  border-right: none;
+}
+
+.leftPanel::after {
+  content: "";
   position: absolute;
-  left: 13px;
-  top: 13px;
-  padding: 0px 5px;
-  font-size: 12px;
-  transition: transform 0.3s ease, color 0.3s ease;
+  top: 0;
+  right: 0;
+  width: 100px;
+  height: 100%;
+  background: linear-gradient(135deg, transparent 0%, #0a0a0a 100%);
+  transform: skewX(-10deg);
+  transform-origin: top right;
 }
 
-input:focus+label {
-  transform: translateY(-20px);
-  color: blue;
+.welcomeTitle {
+  font-size: 3rem;
+  font-weight: 800;
+  color: white;
+  margin: 0;
+  z-index: 1;
+  line-height: 1.2;
 }
 
-input:focus {
-  border-color: blue;
-} */
+.welcomeText {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 1rem;
+  z-index: 1;
+  max-width: 300px;
+}
 
+.rightPanel {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #0a0a0a;
+  padding: 2rem;
+  border: 2px solid #7c3aed;
+  border-left: none;
+}
+
+.formContainer {
+  width: 100%;
+  max-width: 400px;
+}
+
+.formTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.inputGroup {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.icon {
+  position: absolute;
+  right: 1rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 1rem;
+  pointer-events: none;
+}
+
+.input {
+  width: 100%;
+  padding: 0.875rem 3rem 0.875rem 1rem;
+  background-color: transparent;
+  border: none;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.input:focus {
+  border-bottom-color: #8b5cf6;
+}
+
+.submitButton {
+  width: 100%;
+  padding: 0.875rem;
+  background: linear-gradient(135deg, #6b46c1 0%, #8b5cf6 100%);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin-top: 0.5rem;
+}
+
+.submitButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
+}
+
+.submitButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.successMessage {
+  text-align: center;
+  color: #4ade80;
+  margin-top: 1rem;
+  font-size: 0.875rem;
+}
+
+.errorMessage {
+  text-align: center;
+  color: #f87171;
+  margin-top: 1rem;
+  font-size: 0.875rem;
+}
+
+.switchText {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 1.5rem;
+  font-size: 0.875rem;
+}
+
+.switchLink {
+  color: #8b5cf6;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.switchLink:hover {
+  color: #a78bfa;
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .leftPanel {
+    min-height: 200px;
+    padding: 2rem;
+    border-right: 2px solid #7c3aed;
+    border-bottom: none;
+  }
+
+  .leftPanel::after {
+    display: none;
+  }
+
+  .welcomeTitle {
+    font-size: 2rem;
+  }
+
+  .welcomeText {
+    font-size: 0.875rem;
+  }
+
+  .rightPanel {
+    border-left: 2px solid #7c3aed;
+    border-top: none;
+  }
+
+  .formTitle {
+    font-size: 1.5rem;
+  }
+}

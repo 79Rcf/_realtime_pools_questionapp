@@ -1,4 +1,76 @@
-import React, { useState } from "react";
+import React from 'react';
+import styles from './CreatePoll.module.css';
+
+function PollItem({ question, isImagePoll }) {
+  return (
+    <li className={styles.pollItem}>
+      <input type="checkbox" className={styles.pollItem__checkbox} />
+      
+      {/* Icon for image poll (if needed) */}
+      {isImagePoll && <span className={styles.pollItem__imageIcon}>☁️</span>}
+      
+      {/* The Question is the key element. It will grow to fill the center space.
+      */}
+      <div className={styles.pollItem__questionCenter}>
+        {question}
+      </div>
+
+      <button className={styles.pollItem__openButton}>
+        ▶ OPEN POLL
+      </button>
+
+      <button className={styles.pollItem__optionsButton}>
+        ⋮
+      </button>
+    </li>
+  );
+}
+
+export default PollItem;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* import React, { useState } from "react";
 import axios from "axios";
 import styles from "./CreatePoll.module.css";
 
@@ -76,3 +148,4 @@ const CreatePoll = ({ token }) => {
 };
 
 export default CreatePoll;
+ */
