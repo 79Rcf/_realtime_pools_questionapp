@@ -1,15 +1,13 @@
-"use client";
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import styles from "./Host.module.css";
+
+// Feather icons
 import {
   FiUser,
   FiTruck,
   FiAlertCircle,
-  FiCrosshair,
+  FiTarget,
   FiEye,
-  FiCamera,
   FiSettings,
   FiBell,
   FiZap,
@@ -17,17 +15,20 @@ import {
   FiSun,
   FiMoon,
   FiMenu,
-  FiX,
+  FiX
 } from "react-icons/fi";
-import { MdPets, MdLocalFireDepartment } from "react-icons/md";
+
+// Game icons for missing icons
+import { GiPawPrint, GiFlame } from "react-icons/gi";
+
+import Button from "../../components/ui/Button";
+import Input from "../../components/ui/Input";
+import styles from "./Host.module.css";
 
 export default function Dashboard() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [selectedObject, setSelectedObject] = useState("vehicle");
-  const [selectedAlertType, setSelectedAlertType] = useState("appearing");
-  const [whitelistEnabled, setWhitelistEnabled] = useState(true);
-  const [blacklistEnabled, setBlacklistEnabled] = useState(false);
+  const [pollForms, setPollForms] = useState([]);
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
@@ -38,171 +39,131 @@ export default function Dashboard() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  const objectOptions = [
-    { id: "person", label: "Person", icon: <FiUser /> },
-    { id: "vehicle", label: "Vehicle", icon: <FiTruck /> },
-    { id: "pet", label: "Pet", icon: <MdPets /> },
-    { id: "weapon", label: "Weapon", icon: <FiCrosshair /> },
-    { id: "fire", label: "Fire", icon: <MdLocalFireDepartment /> },
-    { id: "multiple", label: "Multiple", icon: <FiGrid /> },
-  ];
+  const handleAddPoll = () => {
+    const newPoll = {
+      id: Date.now().toString(),
+      question: "",
+      options: ["Yes", "No"],
+    };
+    setPollForms([...pollForms, newPoll]);
+  };
 
-  const alertTypes = [
-    {
-      id: "appearing",
-      label: "Appearing",
-      description: "Alert is being sent as soon as person appears.",
-      icon: <FiEye />,
-    },
-    {
-      id: "disappearing",
-      label: "Disappearing",
-      description: "Alert is being sent as soon as person disappears.",
-      icon: <FiAlertCircle />,
-    },
-    {
-      id: "lineCrossing",
-      label: "Line crossing",
-      description: "Alert is being sent when person crosses a line.",
-      icon: <FiZap />,
-    },
-    {
-      id: "trafficControl",
-      label: "Traffic control",
-      description: "Alert is being sent when person crosses a line.",
-      icon: <FiAlertCircle />,
-    },
-    {
-      id: "motion",
-      label: "Motion",
-      description: "Alert is being sent when camera notices a movement.",
-      icon: <FiZap />,
-    },
-    {
-      id: "tampering",
-      label: "Tampering",
-      description: "Alert is being sent when tampering is detected.",
-      icon: <FiAlertCircle />,
-    },
-    {
-      id: "loitering",
-      label: "Loitering",
-      description: "Person is staying in the zone for a specific period of time.",
-      icon: <FiUser />,
-    },
-    {
-      id: "occupancy",
-      label: "Occupancy",
-      description: "Specific number of people appears within the zone.",
-      icon: <FiUser />,
-    },
-    {
-      id: "tailgating",
-      label: "Tailgating",
-      description: "As soon as tailgating happens.",
-      icon: <FiUser />,
-    },
-  ];
+  const handleDeletePoll = (id) => {
+    setPollForms(pollForms.filter((poll) => poll.id !== id));
+  };
+
+  const handleQuestionChange = (id, question) => {
+    setPollForms(
+      pollForms.map((poll) => (poll.id === id ? { ...poll, question } : poll))
+    );
+  };
 
   return (
-    <div className={styles.dashboardContainer}>
+    <div className={styles.dashboard}>
       {/* Top Bar */}
       <header className={styles.topBar}>
         <div className={styles.topBarLeft}>
-          <button className={styles.menuButton} onClick={toggleSidebar}>
+          <Button variant="ghost" size="icon" onClick={toggleSidebar}>
             {isSidebarOpen ? <FiX size={20} /> : <FiMenu size={20} />}
-          </button>
-          <div className={styles.logo}>
-            <div className={styles.logoIcon}>
-              <FiGrid size={24} />
-            </div>
+          </Button>
+          <div className={styles.logoContainer}>
+            <FiGrid size={24} />
           </div>
         </div>
-        <div className={styles.topBarRight}>
-          <button className={styles.themeToggle} onClick={toggleDarkMode}>
-            {isDarkMode ? <FiSun size={20} /> : <FiMoon size={20} />}
-          </button>
-        </div>
+        <Button variant="ghost" size="icon" onClick={toggleDarkMode}>
+          {isDarkMode ? <FiSun size={20} /> : <FiMoon size={20} />}
+        </Button>
       </header>
 
       <div className={styles.mainLayout}>
         {/* Sidebar */}
         <aside
           className={`${styles.sidebar} ${
-            !isSidebarOpen ? styles.sidebarClosed : ""
+            isSidebarOpen ? styles.sidebarOpen : styles.sidebarClosed
           }`}
         >
-          <nav className={styles.sidebarNav}>
-            <Link to="/Session" className={styles.navItem}>
-              <FiBell className={styles.navIcon} />
+          <nav className={styles.nav}>
+            <Link to="/session" className={styles.navLink}>
+              <FiBell size={20} className={styles.icon} />
               {isSidebarOpen && <span>Join a session</span>}
             </Link>
-            <Link to="/polls" className={styles.navItem}>
-              <FiZap className={styles.navIcon} />
-              {isSidebarOpen && <span>completed polls</span>}
+            <Link to="/polls" className={styles.navLink}>
+              <FiZap size={20} className={styles.icon} />
+              {isSidebarOpen && <span>Completed polls</span>}
             </Link>
-            <Link to="/hide polls" className={styles.navItem}>
-              <FiAlertCircle className={styles.navIcon} />
-              {isSidebarOpen && <span>hide polls</span>}
+            <Link to="/hide-polls" className={styles.navLink}>
+              <FiAlertCircle size={20} className={styles.icon} />
+              {isSidebarOpen && <span>Hide polls</span>}
             </Link>
-            <Link to="/configuration" className={`${styles.navItem} ${styles.navItemActive}`}>
-              <FiSettings className={styles.navIcon} />
-              {isSidebarOpen && <span>polls history</span>}
+            <Link to="/configuration" className={`${styles.navLink} ${styles.activeLink}`}>
+              <FiSettings size={20} className={styles.icon} />
+              {isSidebarOpen && <span>Polls history</span>}
             </Link>
-
-            <Link to="/settings" className={styles.navItem}>
-              <FiSettings className={styles.navIcon} />
-              {isSidebarOpen && <span>draft polls</span>}
-            </Link>   
+            <Link to="/settings" className={styles.navLink}>
+              <FiSettings size={20} className={styles.icon} />
+              {isSidebarOpen && <span>Draft polls</span>}
+            </Link>
           </nav>
         </aside>
 
         {/* Main Content */}
-        <main className={styles.mainContent}>
-          <div className={styles.contentHeader}>
-            <h1 className={styles.pageTitle}>Create poll</h1>
-            <div className={styles.actionButtons}>
-              <button className={styles.btnSecondary}>Cancel</button>
-              <button className={styles.btnSecondary}>Save</button>
-              <button className={styles.btnPrimary}>+ Add polls</button>
+        <main
+          className={`${styles.mainContent} ${
+            isSidebarOpen ? styles.mainWithSidebar : styles.mainWithoutSidebar
+          }`}
+        >
+          <div className={styles.headerActions}>
+            <h1>Create poll</h1>
+            <div className={styles.buttonGroup}>
+              <Button variant="outline">Cancel</Button>
+              <Button variant="outline">Save</Button>
+              <Button onClick={handleAddPoll}>+ Add polls</Button>
             </div>
           </div>
 
-          <div className={styles.configSection}>
-            <h2 className={styles.sectionTitle}></h2>
-            <p className={styles.sectionDescription}>
-
-            </p>
-
-            
-          </div>
-
-          <div className={styles.configSection}>
-            
-            
-
-            <div>
-         
-            </div>
-          </div>
-
-          <div className={styles.configSection}>
-
-           
-
-            <div className={styles.filtersList}>
-              <div className={styles.filterItem}>
-                <div className={styles.filterInfo}>
-
-                  
+          {/* Poll Forms */}
+          <div className={styles.pollsContainer}>
+            {pollForms.map((poll) => (
+              <div key={poll.id} className={styles.pollCard}>
+                <Input
+                  type="text"
+                  placeholder="Enter your question"
+                  value={poll.question}
+                  onChange={(e) => handleQuestionChange(poll.id, e.target.value)}
+                  className={styles.pollInput}
+                />
+                <div className={styles.options}>
+                  {poll.options.map((opt, idx) => (
+                    <Input
+                      key={idx}
+                      type="text"
+                      value={opt}
+                      readOnly
+                      className={styles.optionInput}
+                    />
+                  ))}
                 </div>
-               
+                <div className={styles.pollActions}>
+                  <Button variant="outline" size="sm">Save</Button>
+                  <Button variant="outline" size="sm">Publish</Button>
+                  <Button variant="outline" size="sm">Complete</Button>
+                  <Button variant="outline" size="sm">Hide</Button>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => handleDeletePoll(poll.id)}
+                  >
+                    Delete
+                  </Button>
+                </div>
               </div>
+            ))}
 
-              <div>
-              
+            {pollForms.length === 0 && (
+              <div className={styles.noPolls}>
+                No polls created yet. Click "Add polls" to create your first poll.
               </div>
-            </div>
+            )}
           </div>
         </main>
       </div>
