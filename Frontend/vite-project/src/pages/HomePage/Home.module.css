@@ -132,6 +132,7 @@ body {
   padding: 60px 20px;
   display: flex;
   justify-content: center;
+  /* gap: 3rem; */
 }
 
 .container {
@@ -149,11 +150,36 @@ body {
   margin-top: 10px; 
 }
 
-.leftpara {
-  font-size: 28px;
+/* .leftpara {
+  font-size: 3rem;
+  width: 400px;
   font-weight: 600;
   margin-bottom: 20px;
+} */
+
+
+.leftpara  {
+    font-size: 3rem;
+    margin-bottom: 20px;
+      font-weight: 600;
+     width: 400px;
+    opacity: 0;
+    transform: translateX(-100%);
+    animation: slideIn 2s ease forwards;
 }
+
+@keyframes slideIn {
+    0% {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
 
 .para {
   color: #4cafef;
@@ -176,19 +202,20 @@ body {
 }
 
 .paralayout {
-  font-size: 14px;
+  font-size: 18px;
+  width: 500px;
   color: #aaa;
 }
 
 /* Right Section (Poll Card) */
 .glowing {
   flex: 1;
-  min-width: 350px;
+  /* min-width: 350px; */
   background: #1a1a27;
   padding: 30px;
   border-radius: 15px;
-  position: relative;
-  overflow: hidden;
+  /* position: relative; */
+  overflow-y: hidden;
   z-index: 1;
   /* glowing animation */
   box-shadow: 0 0 15px rgba(76, 175, 239, 0.4),

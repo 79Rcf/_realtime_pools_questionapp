@@ -1,6 +1,6 @@
 import { useState } from "react";
 import API from "../../api/axiosInstance";
-import styles from "./SignIn.module.css";
+import styles from "./Signin.module.css";
 
 const Signup = () => {
   const [username, setUsername] = useState("");
