@@ -52,75 +52,69 @@
 
 // export default Signup;
 
-
-import { useState } from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import API from "../../api/axiosInstance";
-import styles from "./Signup.module.css";
-
-
-import { FiUser, FiMail, FiLock } from 'react-icons/fi'; // Feather icons
+import styles from "./Signup.module.css"; // ✅ make sure this file exists
+import { FiUser, FiMail, FiLock } from "react-icons/fi"; // ✅ works after installing react-icons
 
 const Signup = () => {
-  // Sign up state
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // Session login state
-  const [sessionUsername, setSessionUsername] = useState("");
-  const [sessionCode, setSessionCode] = useState("");
-  // Messages
-  const [message, setMessage] = useState("");
 
-  const handleSignup = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await API.post("/auth/signup", {
+      const response = await API.post("/signup", {
         username,
         email,
         password,
       });
-      setMessage(res.data.message);
-
-      // ✅ Save token if present
-      if (res.data.token) {
-        localStorage.setItem("authToken", res.data.token);
-        localStorage.setItem("user", JSON.stringify({ username, email }));
-      }
-    } catch (err) {
-      setMessage(err.response?.data?.error || "Error occurred");
+      console.log("Signup success:", response.data);
+      navigate("/signin"); // redirect after signup
+    } catch (error) {
+      console.error("Signup error:", error);
     }
   };
 
   return (
-    <div className={styles.container}>
-      <h2>Sign Up</h2>
-      <form onSubmit={handleSubmit} className={styles.form}>
+    <form onSubmit={handleSubmit} className={styles.form}>
+      <label>
+        Username
         <input
           type="text"
-          placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
         />
+      </label>
+
+      <label>
+        Email
         <input
           type="email"
-          placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
+      </label>
+
+      <label>
+        Password
         <input
           type="password"
-          placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit">Sign Up</button>
-      </form>
-      {message && <p>{message}</p>}
-    </div>
-  )
-}
+      </label>
+
+      <button type="submit">Sign Up</button>
+    </form>
+  );
+};
 
 export default Signup;
+
