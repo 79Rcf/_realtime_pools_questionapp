@@ -1,392 +1,460 @@
-/* --- CSS Variables for Easy Theming --- */
-:root {
-    --color-primary: #007bff; /* Blue for primary accents (e.g., active link, buttons) */
-    --color-secondary: #f0f2f5; /* Light gray for side panels */
-    --color-text: #333;
-    --color-border: #ddd;
-    --sidebar-width: 250px;
-    --right-panel-width: 300px;
+.dashboardContainer {
+  min-height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* ---------------------------------- */
-/* --- 1. App Container and Layout --- */
-/* ---------------------------------- */
-
-.appContainer {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh; /* Takes full viewport height */
-    font-family: Arial, sans-serif;
-    background-color: #fff;
-}
-
+/* Top Bar */
 .topBar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    border-bottom: 1px solid var(--color-border);
-    background-color: #fff;
-    font-size: 0.9rem;
-    color: #666;
+  height: 64px;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  background-color: var(--color-card);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
-/* Flex container for the three main columns */
+.topBarLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.menuButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--color-foreground);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.menuButton:hover {
+  background-color: var(--color-muted);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logoIcon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.topBarRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.themeToggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--color-foreground);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.themeToggle:hover {
+  background-color: var(--color-muted);
+}
+
+/* Main Layout */
 .mainLayout {
-    display: flex;
-    flex: 1; /* Ensures it stretches to fill remaining height */
+  display: flex;
+  height: calc(100vh - 64px);
 }
 
-/* ---------------------------------- */
-/* --- 2. Left Sidebar Styling --- */
-/* ---------------------------------- */
+/* Sidebar */
+.sidebar {
+  width: 240px;
+  background-color: var(--color-card);
+  border-right: 1px solid var(--color-border);
+  padding: 24px 12px;
+  transition: width 0.3s ease, padding 0.3s ease;
+  overflow-y: auto;
+}
 
+.sidebarClosed {
+  width: 72px;
+  padding: 24px 8px;
+}
 
-.dashboardContainer {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    font-family: Arial, sans-serif;
-  }
-  
-  /* Header (Top Bar) */
-  .topBar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 25px 20px;
-    background-color: #fff;
-    color: #000;
-  }
-  
-  /* Layout with sidebar and main content */
-  .mainLayout {
-    display: flex;
-    flex: 1;
-  }
-  
-  /* Sidebar */
-  .sidebar {
-    width: 250px;
-    background-color: #ffff;
-    color: #fff;
-    transition: width 0.3s ease;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
+.sidebarNav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
 
-  }
-  
-  .sidebarClosed {
-    width: 0;
-    
-  }
-  
-  .sidebar__back {
-    padding: 15px 20px;
-    cursor: pointer;
-    font-weight: bold;
-    background-color: #fff;
-    border-bottom: 1px solid #374151;
-    user-select: none;
-  }
-  
-  .sidebar__menu {
-    display: flex;
-    flex-direction: column;
-    padding-top: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin-right: 5px;
-  }
-  
-  .sidebar__item {
-    padding: 12px 20px;
-    background: none;
-    border: none;
-    text-align: left;
-    color: #d1d5db;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background 0.2s, color 0.2s;
-  }
-  
-  .sidebar__item:hover {
-    background-color: #374151;
-    color: #fff;
-  }
-  
-  .sidebar__itemActive {
-    background-color: #2563eb;
-    color: #fff;
-    font-weight: bold;
-  }
-  
-  /* Main content */
-  .mainContent {
-    flex: 1;
-    padding: 20px;
-    background-color: #f3f4f6;
-    overflow-y: auto;
-  }
-  
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--color-muted-foreground);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  white-space: nowrap;
+}
 
+.navItem:hover {
+  background-color: var(--color-muted);
+  color: var(--color-foreground);
+}
 
-/* HostDashboard.module.css */
+.navItemActive {
+  background-color: #f3e8ff;
+  color: #8b5cf6;
+}
 
-/* Container holding sidebar + main content */
-.dashboardContainer {
-    display: flex;
-    height: 100vh;
-    font-family: Arial, sans-serif;
-  }
-  
-  /* Sidebar styling */
-  .sidebar {
-    width: 250px;                /* full width when open */  /* dark gray */
-    color: #000000;
-    transition: width 0.3s ease;
-    overflow: hidden;            /* hide content when closed */
-    display: flex;
-    flex-direction: column;
-  }
-  
-  /* Closed sidebar */
-  .sidebarClosed {
-    width: 0;
-  }
-  
-  /* Back button */
-  .sidebar__back {
-    padding: 15px 20px;
-    cursor: pointer;
-    font-weight: bold;
-    user-select: none;
-    border-bottom: 1px solid #374151;
-  }
-  
-  /* Menu container */
-  .sidebar__menu {
-    display: flex;
-    flex-direction: column;
-    padding-top: 10px;
-  }
-  
-  /* Each menu button */
-  .sidebar__item {
-    padding: 12px 20px;
-    background: none;
-    border: none;
-    text-align: left;
-    color: #000000;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background 0.2s, color 0.2s;
-  }
-  
-  .sidebar__item:hover {
-    background-color: #99a3b3;
-    color: #fff;
-  }
-  
-  /* Active menu item */
-  .sidebar__itemActive {  
-    color: #080808;
-    font-weight: bold;
-  }
-  
-  /* Main content area */
-  .mainContent {
-    flex: 1;                     /* take remaining space */
-    padding: 20px;
-    overflow-y: auto;
-  }
-  
+.dark .navItemActive {
+  background-color: rgba(139, 92, 246, 0.15);
+  color: #a78bfa;
+}
 
-/* ---------------------------------- */
-/* --- 3. Main Content Styling --- */
-/* ---------------------------------- */
+.navIcon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
 
-.contentArea {
-    flex-grow: 1; /* Takes up all available horizontal space */
-    padding: 20px;
-    background-color: #fff;
-    overflow-y: auto;
+.sidebarClosed .navItem {
+  justify-content: center;
+  padding: 12px;
+}
+
+.sidebarClosed .navItem span {
+  display: none;
+}
+
+/* Main Content */
+.mainContent {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32px 48px;
 }
 
 .contentHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
 }
 
-.contentHeader h1 {
-    font-size: 1.8rem;
-    font-weight: 600;
+.pageTitle {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--color-foreground);
+  margin: 0;
 }
 
-.addContentButton {
-    background-color: var(--color-primary);
-    color: white;
-    padding: 8px 15px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.2s;
+.actionButtons {
+  display: flex;
+  gap: 12px;
 }
 
-.contentControls {
-    margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid var(--color-border);
+.btnSecondary {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-foreground);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.contentControls label {
-    margin-left: 8px;
-    font-size: 0.9rem;
+.btnSecondary:hover {
+  background-color: var(--color-muted);
 }
 
-.pollList {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-/* Note: The styling for individual .pollItem is in a separate CSS module 
-   (e.g., CreatePoll.module.css) as per React component best practice. */
-
-/* ---------------------------------- */
-/* --- 4. Right Panel Styling --- */
-/* ---------------------------------- */
-
-.rightPanel {
-    width: var(--right-panel-width);
-    border-left: 1px solid var(--color-border);
-    padding: 20px;
-    background-color: var(--color-secondary);
-    flex-shrink: 0;
-    overflow-y: auto;
+.btnPrimary {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.rightPanel__ready {
-    padding: 15px;
-    margin-bottom: 20px;
-    background-color: #fff;
-    border-radius: 4px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+.btnPrimary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
 }
 
-.rightPanel__ready h2 {
-    font-size: 1.1rem;
-    margin-top: 0;
+/* Config Sections */
+.configSection {
+  margin-bottom: 48px;
 }
 
-.rightPanel__scores {
-    background-color: #fff;
-    border-radius: 4px;
-    padding: 15px;
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-foreground);
+  margin: 0 0 8px 0;
 }
 
-.rightPanel__scores h3 {
-    font-size: 1rem;
-    margin-top: 0;
-    border-bottom: 1px solid var(--color-border);
-    padding-bottom: 10px;
-    margin-bottom: 10px;
+.sectionDescription {
+  font-size: 14px;
+  color: var(--color-muted-foreground);
+  margin: 0 0 24px 0;
 }
 
-/* --- 5. Responsive Styling --- */
-@media (max-width: 1024px) {
-    /* Tablet and small laptop */
-    .mainLayout {
-        flex-direction: column;
-    }
-
-    .sidebar,
-    .rightPanel {
-        width: 100%;
-        border: none;
-        padding: 10px 0;
-    }
-
-    .contentArea {
-        padding: 15px;
-    }
-
-    .contentHeader h1 {
-        font-size: 1.5rem;
-    }
-
-    .addContentButton {
-        padding: 6px 12px;
-    }
+/* Options Grid (Object Selection) */
+.optionsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
 }
 
+.optionCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px 16px;
+  border-radius: 12px;
+  border: 2px solid var(--color-border);
+  background-color: var(--color-card);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.optionCard:hover {
+  border-color: #8b5cf6;
+  background-color: #faf5ff;
+}
+
+.dark .optionCard:hover {
+  background-color: rgba(139, 92, 246, 0.05);
+}
+
+.optionCardActive {
+  border-color: #8b5cf6;
+  background-color: #f3e8ff;
+}
+
+.dark .optionCardActive {
+  background-color: rgba(139, 92, 246, 0.15);
+}
+
+.optionIcon {
+  font-size: 24px;
+  color: var(--color-foreground);
+}
+
+.optionLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-foreground);
+}
+
+/* Alert Types Grid */
+.alertTypesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.alertTypeCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px;
+  border-radius: 12px;
+  border: 2px solid var(--color-border);
+  background-color: var(--color-card);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.alertTypeCard:hover {
+  border-color: #8b5cf6;
+  background-color: #faf5ff;
+}
+
+.dark .alertTypeCard:hover {
+  background-color: rgba(139, 92, 246, 0.05);
+}
+
+.alertTypeCardActive {
+  border-color: #8b5cf6;
+  background-color: #f3e8ff;
+}
+
+.dark .alertTypeCardActive {
+  background-color: rgba(139, 92, 246, 0.15);
+}
+
+.alertTypeIcon {
+  flex-shrink: 0;
+  font-size: 20px;
+  color: var(--color-foreground);
+  margin-top: 2px;
+}
+
+.alertTypeContent {
+  flex: 1;
+}
+
+.alertTypeLabel {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-foreground);
+  margin-bottom: 4px;
+}
+
+.alertTypeDescription {
+  font-size: 13px;
+  color: var(--color-muted-foreground);
+  line-height: 1.5;
+}
+
+/* Filters */
+.filtersList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.filterItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-card);
+}
+
+.filterInfo {
+  flex: 1;
+  padding-right: 24px;
+}
+
+.filterLabel {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-foreground);
+  margin-bottom: 6px;
+}
+
+.filterDescription {
+  font-size: 13px;
+  color: var(--color-muted-foreground);
+  line-height: 1.5;
+}
+
+/* Toggle Switch */
+.toggle {
+  position: relative;
+  width: 48px;
+  height: 28px;
+  border-radius: 14px;
+  border: none;
+  background-color: var(--color-muted);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  flex-shrink: 0;
+}
+
+.toggleActive {
+  background-color: #8b5cf6;
+}
+
+.toggleSlider {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: white;
+  transition: transform 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggleActive .toggleSlider {
+  transform: translateX(20px);
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
-    /* Mobile */
-    .topBar {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 10px;
-    }
+  .mainContent {
+    padding: 24px 16px;
+  }
 
-    .contentHeader {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
+  .contentHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
 
-    .sidebar {
-        display: none; /* Hide sidebar, can be replaced with a hamburger menu */
-    }
+  .actionButtons {
+    width: 100%;
+    flex-wrap: wrap;
+  }
 
-    .mainLayout {
-        flex-direction: column;
-    }
+  .btnSecondary,
+  .btnPrimary {
+    flex: 1;
+    min-width: 100px;
+  }
 
-    .contentArea {
-        padding: 10px;
-    }
+  .optionsGrid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
 
-    .rightPanel {
-        width: 100%;
-        padding: 10px;
-        margin-top: 20px;
-    }
+  .alertTypesGrid {
+    grid-template-columns: 1fr;
+  }
 
-    .contentHeader h1 {
-        font-size: 1.3rem;
-    }
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 64px;
+    height: calc(100vh - 64px);
+    z-index: 50;
+    transform: translateX(0);
+  }
 
-    .addContentButton {
-        width: 100%;
-        text-align: center;
-        padding: 8px 0;
-    }
-
-    .pollList li {
-        font-size: 0.9rem;
-        padding: 8px;
-    }
-}
-
-@media (max-width: 480px) {
-    /* Small mobile devices */
-    .contentHeader h1 {
-        font-size: 1.1rem;
-    }
-
-    .addContentButton {
-        font-size: 0.9rem;
-    }
-
-    .pollList li {
-        font-size: 0.85rem;
-        padding: 6px;
-    }
-
-    .rightPanel__ready h2,
-    .rightPanel__scores h3 {
-        font-size: 0.9rem;
-    }
+  .sidebarClosed {
+    transform: translateX(-100%);
+  }
 }
