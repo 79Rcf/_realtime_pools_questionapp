@@ -1,0 +1,460 @@
+.dashboardContainer {
+  min-height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Top Bar */
+.topBar {
+  height: 64px;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  background-color: var(--color-card);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.topBarLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.menuButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--color-foreground);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.menuButton:hover {
+  background-color: var(--color-muted);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logoIcon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.topBarRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.themeToggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--color-foreground);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.themeToggle:hover {
+  background-color: var(--color-muted);
+}
+
+/* Main Layout */
+.mainLayout {
+  display: flex;
+  height: calc(100vh - 64px);
+}
+
+/* Sidebar */
+.sidebar {
+  width: 240px;
+  background-color: var(--color-card);
+  border-right: 1px solid var(--color-border);
+  padding: 24px 12px;
+  transition: width 0.3s ease, padding 0.3s ease;
+  overflow-y: auto;
+}
+
+.sidebarClosed {
+  width: 72px;
+  padding: 24px 8px;
+}
+
+.sidebarNav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--color-muted-foreground);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.navItem:hover {
+  background-color: var(--color-muted);
+  color: var(--color-foreground);
+}
+
+.navItemActive {
+  background-color: #f3e8ff;
+  color: #8b5cf6;
+}
+
+.dark .navItemActive {
+  background-color: rgba(139, 92, 246, 0.15);
+  color: #a78bfa;
+}
+
+.navIcon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.sidebarClosed .navItem {
+  justify-content: center;
+  padding: 12px;
+}
+
+.sidebarClosed .navItem span {
+  display: none;
+}
+
+/* Main Content */
+.mainContent {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32px 48px;
+}
+
+.contentHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+
+.pageTitle {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--color-foreground);
+  margin: 0;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 12px;
+}
+
+.btnSecondary {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-foreground);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btnSecondary:hover {
+  background-color: var(--color-muted);
+}
+
+.btnPrimary {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btnPrimary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+/* Config Sections */
+.configSection {
+  margin-bottom: 48px;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-foreground);
+  margin: 0 0 8px 0;
+}
+
+.sectionDescription {
+  font-size: 14px;
+  color: var(--color-muted-foreground);
+  margin: 0 0 24px 0;
+}
+
+/* Options Grid (Object Selection) */
+.optionsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.optionCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px 16px;
+  border-radius: 12px;
+  border: 2px solid var(--color-border);
+  background-color: var(--color-card);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.optionCard:hover {
+  border-color: #8b5cf6;
+  background-color: #faf5ff;
+}
+
+.dark .optionCard:hover {
+  background-color: rgba(139, 92, 246, 0.05);
+}
+
+.optionCardActive {
+  border-color: #8b5cf6;
+  background-color: #f3e8ff;
+}
+
+.dark .optionCardActive {
+  background-color: rgba(139, 92, 246, 0.15);
+}
+
+.optionIcon {
+  font-size: 24px;
+  color: var(--color-foreground);
+}
+
+.optionLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-foreground);
+}
+
+/* Alert Types Grid */
+.alertTypesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.alertTypeCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px;
+  border-radius: 12px;
+  border: 2px solid var(--color-border);
+  background-color: var(--color-card);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.alertTypeCard:hover {
+  border-color: #8b5cf6;
+  background-color: #faf5ff;
+}
+
+.dark .alertTypeCard:hover {
+  background-color: rgba(139, 92, 246, 0.05);
+}
+
+.alertTypeCardActive {
+  border-color: #8b5cf6;
+  background-color: #f3e8ff;
+}
+
+.dark .alertTypeCardActive {
+  background-color: rgba(139, 92, 246, 0.15);
+}
+
+.alertTypeIcon {
+  flex-shrink: 0;
+  font-size: 20px;
+  color: var(--color-foreground);
+  margin-top: 2px;
+}
+
+.alertTypeContent {
+  flex: 1;
+}
+
+.alertTypeLabel {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-foreground);
+  margin-bottom: 4px;
+}
+
+.alertTypeDescription {
+  font-size: 13px;
+  color: var(--color-muted-foreground);
+  line-height: 1.5;
+}
+
+/* Filters */
+.filtersList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.filterItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-card);
+}
+
+.filterInfo {
+  flex: 1;
+  padding-right: 24px;
+}
+
+.filterLabel {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-foreground);
+  margin-bottom: 6px;
+}
+
+.filterDescription {
+  font-size: 13px;
+  color: var(--color-muted-foreground);
+  line-height: 1.5;
+}
+
+/* Toggle Switch */
+.toggle {
+  position: relative;
+  width: 48px;
+  height: 28px;
+  border-radius: 14px;
+  border: none;
+  background-color: var(--color-muted);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  flex-shrink: 0;
+}
+
+.toggleActive {
+  background-color: #8b5cf6;
+}
+
+.toggleSlider {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: white;
+  transition: transform 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggleActive .toggleSlider {
+  transform: translateX(20px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .mainContent {
+    padding: 24px 16px;
+  }
+
+  .contentHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .actionButtons {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .btnSecondary,
+  .btnPrimary {
+    flex: 1;
+    min-width: 100px;
+  }
+
+  .optionsGrid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+
+  .alertTypesGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 64px;
+    height: calc(100vh - 64px);
+    z-index: 50;
+    transform: translateX(0);
+  }
+
+  .sidebarClosed {
+    transform: translateX(-100%);
+  }
+}
