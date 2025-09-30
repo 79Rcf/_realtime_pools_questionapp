@@ -3,7 +3,7 @@
 import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import API from "../../api/axiosInstance"
-import styles from "./SignIn.module.css"
+import styles from "./Signin.module.css"
 import { FiMail, FiLock } from "react-icons/fi"
 
 const SignIn = () => {
@@ -50,9 +50,20 @@ const SignIn = () => {
       <div className={styles.leftPanel}>
         <h1 className={styles.welcomeTitle}>WELCOME BACK!</h1>
         <p className={styles.welcomeText}>
-          Lorem ipsum dolor sit amet consectetur adipisicing.
+          Explore questions and create polls
         </p>
+
+        {/* Session Join Input + Button */}
+        <div className={styles.sessionJoinBox}>
+          <input
+            type="text"
+            placeholder="Enter session code"
+            className={styles.sessionInput}
+          />
+          <button className={styles.sessionButton}>Join Session</button>
+        </div>
       </div>
+
 
       <div className={styles.rightPanel}>
         <div className={styles.formContainer}>

@@ -19,6 +19,38 @@
   border-right: none;
 }
 
+/* session button */
+.sessionJoinBox {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.sessionInput {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.sessionButton {
+  padding: 10px 16px;
+  background-color: #007bff;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.sessionButton:hover {
+  background-color: #0056b3;
+}
+
+
 .leftPanel::after {
   content: "";
   position: absolute;
