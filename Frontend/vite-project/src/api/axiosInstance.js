@@ -7,28 +7,27 @@ const API = axios.create({
   },
 });
 
-API.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  ("authToken");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-},
-(error) => {
-  return Promise.reject(error);
-},);
+API.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("authToken"); // ✅ fixed key
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
-API.interceptors.response.use((response) => {
-  return response;
-}, (error) => {
-  if (error.response && error.response.status === 401) {
-    // Handle unauthorized access, e.g., redirect to login
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("user");
-    console.log("Unauthorized, redirecting to login...");
+API.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("user");
+      console.log("Unauthorized, redirecting to login...");
+    }
+    return Promise.reject(error);
   }
-  return Promise.reject(error);
-},);
+);
 
 export default API;

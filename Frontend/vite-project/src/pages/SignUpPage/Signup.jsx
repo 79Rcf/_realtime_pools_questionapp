@@ -70,12 +70,10 @@ const Signup = () => {
             />
             <FiLock className={styles.inputIcon} />
           </div>
-          
-          
+
           <button type="submit" className={styles.signupButton}>
             Sign Up
           </button>
-          
         </form>
 
         {message && <p className={styles.message}>{message}</p>}
