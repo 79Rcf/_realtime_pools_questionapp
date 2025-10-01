@@ -1,45 +1,83 @@
-import axios from "axios";
+import API from "./axiosInstance";
 
-const API = "http://localhost:3000/api";
+// helper for auth
+const authHeaders = () => ({
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+  },
+});
 
-/* creating polls */
-
+// Create a poll dynamically
 export const createPoll = async ({ question, options, sessionId }) => {
+  if (!question || !options || !sessionId) {
+    throw new Error("question, options, and sessionId are required");
+  }
+
   try {
-    const response = await axios.post(`${API}/polls`, {
-      question,
-      options,
-      sessionId
-    });
-    return response.data;
+    const response = await API.post(
+      "/polls",
+      { question, options, session_id: sessionId },
+      authHeaders()
+    );
+    return response.data; // ✅ this returns the full poll object including backend id
   } catch (error) {
-    console.error("Error creating poll:", error);
+    console.error("Error creating poll:", error.response?.data || error);
     throw error;
   }
 };
 
 
-export const publishPoll = async (pollId) => {
-  const response = await axios.post(`${API}/polls/${pollId}/publish`);
-  return response.data;
+// Update poll
+export const updatePoll = async (pollId, data) => {
+  try {
+    const response = await API.put(`/polls/${pollId}`, data, authHeaders());
+    return response.data;
+  } catch (error) {
+    console.error("Error updating poll:", error.response?.data || error);
+    throw error;
+  }
 };
 
-export const updatePoll = async (pollId) => {
-    const response = await axios.put(`${API}/polls/${pollId}`);
+// Publish poll
+export const publishPoll = async (pollId) => {
+  try {
+    const response = await API.patch(`/polls/${pollId}/publish`, {}, authHeaders());
     return response.data;
-}
+  } catch (error) {
+    console.error("Error publishing poll:", error.response?.data || error);
+    throw error;
+  }
+};
 
-export const completePoll = async (pollId) => {
-    const response = await axios.post(`${API}/polls/${pollId}/complete`);
-    return response.data;
-}
-
+// Hide poll
 export const hidePoll = async (pollId) => {
-    const response = await axios.post(`${API}/polls/${pollId}/hide`);
+  try {
+    const response = await API.patch(`/polls/${pollId}/hide`, {}, authHeaders());
     return response.data;
-}
+  } catch (error) {
+    console.error("Error hiding poll:", error.response?.data || error);
+    throw error;
+  }
+};
 
-export const pollAnswer = async (pollId, answer) => {
-    const response = await axios.post(`${API}/polls/${pollId}/answer`, { answer });
+// Complete poll
+export const completePoll = async (pollId) => {
+  try {
+    const response = await API.patch(`/polls/${pollId}/complete`, {}, authHeaders());
     return response.data;
-}
+  } catch (error) {
+    console.error("Error completing poll:", error.response?.data || error);
+    throw error;
+  }
+};
+
+// Submit poll answer
+export const pollAnswer = async (pollId, answer) => {
+  try {
+    const response = await API.post(`/pollsAnswer/${pollId}/answer`, { answer }, authHeaders());
+    return response.data;
+  } catch (error) {
+    console.error("Error submitting answer:", error.response?.data || error);
+    throw error;
+  }
+};
