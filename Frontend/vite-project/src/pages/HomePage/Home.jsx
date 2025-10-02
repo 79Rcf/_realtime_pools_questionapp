@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import styles from "./Home.module.css"; 
+import styles from "./Home.module.css";
 
 const Home = () => {
   return (
@@ -10,7 +10,7 @@ const Home = () => {
           <div className={styles.mikegen}>
             <div className={styles.mike}>
               <h3 className={styles.titleLeft}>
-                Fast <span className={styles.tit}>Poll</span>
+                Real-Time<span className={styles.tit}>Poll</span>
               </h3>
             </div>
 
@@ -34,10 +34,10 @@ const Home = () => {
         <div className={styles.container}>
           <div className={styles.leftsec}>
             <p className={styles.leftpara}>
-              Create instant, real-time <span className={styles.para}>polls</span> for free
+              Create Instant, Real-Time <span className={styles.para}>Polls</span> For Free
             </p>
             <Link to="/dashboard">
-              <button className={styles.button}>Create your poll now</button>
+              <button className={styles.button}>Explore Now!</button>
             </Link>
             <p className={styles.paralayout}>No registration required - it's 100% free and takes less than a minute.</p>
           </div>

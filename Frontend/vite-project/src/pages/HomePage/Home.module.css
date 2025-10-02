@@ -52,7 +52,7 @@
 .seperate {
   width: 1px;
   height: 24px;
-  background: #2a2a3a;
+  background:  #0056b3;;
 }
 
 .publicpoll,
@@ -145,7 +145,7 @@
 
 .button {
   padding: 1rem 2.5rem;
-  background: linear-gradient(135deg, #6b46c1 0%, #7c3aed 100%);
+  background: linear-gradient(135deg,  #0056b3 0%, #7c3aed 100%);
   color: #ffffff;
   border: none;
   border-radius: 50px;

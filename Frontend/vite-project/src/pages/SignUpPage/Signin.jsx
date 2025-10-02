@@ -48,9 +48,9 @@ const SignIn = () => {
   return (
     <div className={styles.container}>
       <div className={styles.leftPanel}>
-        <h1 className={styles.welcomeTitle}>WELCOME BACK!</h1>
+        <h1 className={styles.welcomeTitle}>Join A Session</h1>
         <p className={styles.welcomeText}>
-          Explore questions and create polls
+          Explore questions, join sessions and create polls
         </p>
 
         {/* Session Join Input + Button */}
