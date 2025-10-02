@@ -23,7 +23,7 @@ const connection = new Pool({
     console.log("Connected to PostgreSQL database");
     client.release();
   } catch (err) {
-    console.error("❌ Database connection error:");
+    console.error(" Database connection error:");
     console.error("   Message:", err.message);
     console.error("   Detail:", err.detail || "N/A");
     console.error("   Hint:", err.hint || "N/A");
