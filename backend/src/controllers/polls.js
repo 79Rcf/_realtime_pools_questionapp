@@ -1,6 +1,19 @@
 import connection from "../config/database.js";
-import { qstashClient } from "../config/qstash.js";   
+import { qstashClient } from "../config/qstash.js";
 import { CHANNEL } from "../config/notifications.js";
+
+// 🛠️ helper to normalize DB poll rows into a flat object
+const normalizePoll = (poll) => ({
+  id: poll.id,
+  question: poll.question,
+  options: poll.options,
+  status: poll.status,
+  sessionId: poll.session_id,
+  hostId: poll.host_id,
+  createdAt: poll.created_at,
+  updatedAt: poll.updated_at,
+  publishAt: poll.publish_at,
+});
 
 // -------------------- CREATE POLL --------------------
 export const createPoll = async (req, res, next) => {
@@ -13,11 +26,12 @@ export const createPoll = async (req, res, next) => {
     }
 
     const result = await connection.query(
-      "INSERT INTO polls (host_id, question, options, status, session_id) VALUES ($1, $2, $3, 'draft', $4) RETURNING *",
+      `INSERT INTO polls (host_id, question, options, status, session_id)
+       VALUES ($1, $2, $3, 'draft', $4) RETURNING *`,
       [host_id, question, options, session_id]
     );
 
-    res.status(201).json({ message: "Poll created (draft)", poll: result.rows[0] });
+    res.status(201).json(normalizePoll(result.rows[0]));
   } catch (err) {
     next(err);
   }
@@ -31,7 +45,7 @@ export const updatePoll = async (req, res, next) => {
     const host_id = req.user.id;
 
     const pollQuery = await connection.query("SELECT * FROM polls WHERE id=$1", [id]);
-    if (pollQuery.rows.length === 0) return res.status(404).json({ error: "Poll not found" });
+    if (!pollQuery.rows.length) return res.status(404).json({ error: "Poll not found" });
 
     const poll = pollQuery.rows[0];
     if (poll.host_id !== host_id) return res.status(403).json({ error: "Not authorized" });
@@ -44,13 +58,13 @@ export const updatePoll = async (req, res, next) => {
       [question || poll.question, options || poll.options, id]
     );
 
-    res.json({ message: "Poll updated", poll: updated.rows[0] });
+    res.json(normalizePoll(updated.rows[0]));
   } catch (err) {
     next(err);
   }
 };
 
-// -------------------- PUBLISH POLL (with QStash notification) --------------------
+// -------------------- PUBLISH POLL --------------------
 export const publishPoll = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -70,19 +84,9 @@ export const publishPoll = async (req, res, next) => {
 
     const io = req.app.get("io");
     io.to(`session_${poll.session_id}`).emit("pollPublished", result.rows[0]);
-  
-    /* await qstashClient.publish({
-      url: "https://your-server.com/api/notifications", // your notification endpoint
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        poll_id: result.rows[0].id,
-        session_id: result.rows[0].session_id,
-        question: result.rows[0].question,
-      }),
-    });
- */
+
     console.log(`QStash notification sent on channel: ${CHANNEL}`);
-    res.json({ message: "Poll published", poll: result.rows[0] });
+    res.json(normalizePoll(result.rows[0]));
   } catch (err) {
     next(err);
   }
@@ -105,7 +109,7 @@ export const hidePoll = async (req, res, next) => {
       [id]
     );
 
-    res.json({ message: "Poll hidden", poll: result.rows[0] });
+    res.json(normalizePoll(result.rows[0]));
   } catch (err) {
     next(err);
   }
@@ -128,7 +132,7 @@ export const completePoll = async (req, res, next) => {
       [id]
     );
 
-    res.json({ message: "Poll completed", poll: result.rows[0] });
+    res.json(normalizePoll(result.rows[0]));
   } catch (err) {
     next(err);
   }
@@ -154,7 +158,7 @@ export const getPolls = async (req, res, next) => {
     }
 
     const result = await connection.query(query, params);
-    res.json({ polls: result.rows });
+    res.json(result.rows.map(normalizePoll));
   } catch (err) {
     next(err);
   }
@@ -173,15 +177,54 @@ export const getPollById = async (req, res, next) => {
 
     if (req.user.role === "host") {
       if (poll.host_id !== userId) return res.status(403).json({ error: "Not authorized" });
-      return res.json({ poll });
+      return res.json(normalizePoll(poll));
     } else {
       if (poll.status !== "published") return res.status(403).json({ error: "This poll is not available" });
-      return res.json({ poll });
+      return res.json(normalizePoll(poll));
     }
   } catch (err) {
     next(err);
   }
 };
+   
+   
+     // -------------------- DELETE POLL --------------------
+export const deletePoll = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const host_id = req.user.id;
+
+    // check if poll exists
+    const pollQuery = await connection.query("SELECT * FROM polls WHERE id=$1", [id]);
+    if (!pollQuery.rows.length) {
+      return res.status(404).json({ error: "Poll not found" });
+    }
+
+    const poll = pollQuery.rows[0];
+
+    // only host who created it can delete
+    if (poll.host_id !== host_id) {
+      return res.status(403).json({ error: "Not authorized" });
+    }
+
+    // only allow delete if poll is draft or hidden
+    if (!["draft", "hidden"].includes(poll.status)) {
+      return res.status(400).json({ error: "Only draft or hidden polls can be deleted" });
+    }
+
+    await connection.query("DELETE FROM polls WHERE id=$1", [id]);
+
+    res.json({ message: "Poll deleted", id: poll.id });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+
+
+
+
 
 // -------------------- GET POLLS FOR A SESSION --------------------
 export const getSessionPolls = async (req, res, next) => {
@@ -200,7 +243,7 @@ export const getSessionPolls = async (req, res, next) => {
     const result = await connection.query(query, params);
     if (!result.rows.length) return res.status(404).json({ error: "No polls found for this session" });
 
-    res.json({ polls: result.rows });
+    res.json(result.rows.map(normalizePoll));
   } catch (err) {
     next(err);
   }

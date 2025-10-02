@@ -1,138 +1,224 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import {
-  FiAlertCircle,
-  FiSettings,
-  FiBell,
-  FiZap,
-  FiGrid,
-  FiSun,
-  FiMoon,
-  FiMenu,
-  FiX,
-} from "react-icons/fi";
+"use client"
 
-import Button from "../../components/ui/Button";
-import Input from "../../components/ui/Input";
-import styles from "./Host.module.css";
-import { createPoll, publishPoll, completePoll, hidePoll } from "../../api/polls";
+import { useState, useEffect } from "react"
+import { Link, useNavigate } from "react-router-dom"
+import { FiAlertCircle, FiSettings, FiBell, FiZap, FiGrid, FiSun, FiMoon, FiMenu, FiX } from "react-icons/fi"
+
+import Button from "../../components/ui/Button"
+import Input from "../../components/ui/Input"
+import styles from "./Host.module.css"
+import {
+  createPoll,
+  publishPoll,
+  completePoll,
+  hidePoll,
+  deletePoll,
+  fetchPolls,
+  isAuthenticated,
+} from "../../api/polls"
 
 export default function Dashboard() {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [pollForms, setPollForms] = useState([]);
+  const [isDarkMode, setIsDarkMode] = useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true)
+  const [pollForms, setPollForms] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const loadPolls = async () => {
+      // Check if user is authenticated
+      if (!isAuthenticated()) {
+        setError("You must be logged in to view polls")
+        navigate("/login") // Redirect to login page
+        return
+      }
+
+      try {
+        setIsLoading(true)
+        console.log("[v0] Loading polls...")
+        const polls = await fetchPolls()
+        console.log("[v0] Received polls:", polls)
+
+        if (!Array.isArray(polls)) {
+          console.error("[v0] Polls is not an array:", polls)
+          setPollForms([])
+          setError("Received invalid data format from server")
+          return
+        }
+
+        // Transform backend polls to match frontend structure
+        const transformedPolls = polls.map((poll) => ({
+          id: poll.id.toString(),
+          question: poll.question,
+          options: poll.options,
+          sessionId: poll.session_id?.toString() || "",
+          status: poll.status || "draft",
+          backendId: poll.id,
+        }))
+
+        console.log("[v0] Transformed polls:", transformedPolls)
+        setPollForms(transformedPolls)
+        setError(null)
+      } catch (err) {
+        console.error("[v0] Failed to load polls:", err)
+        setError("Failed to load polls. Please try again.")
+        setPollForms([]) // Set empty array on error to prevent map errors
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    loadPolls()
+  }, [navigate])
 
   const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-    document.documentElement.classList.toggle("dark");
-  };
+    setIsDarkMode(!isDarkMode)
+    document.documentElement.classList.toggle("dark")
+  }
 
   const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
+    setIsSidebarOpen(!isSidebarOpen)
+  }
 
   // Add new poll
   const handleAddPoll = () => {
     const newPoll = {
-      id: Date.now().toString(),
+      id: `temp-${Date.now()}`,
       question: "",
       options: [""],
       sessionId: "",
-      status: "new", // new, draft, published, completed, hidden
-      backendId: null, // store backend poll id here
-    };
-    setPollForms([...pollForms, newPoll]);
-  };
+      status: "new",
+      backendId: null,
+    }
+    setPollForms([...pollForms, newPoll])
+  }
 
   // Save poll as draft
   const handleSavePoll = async (poll) => {
     try {
       if (!poll.question || !poll.options.length || !poll.sessionId) {
-        return alert("Please enter a valid question, options, and session ID.");
+        setError("Please enter a valid question, options, and session ID.")
+        return
+      }
+
+      const validOptions = poll.options.filter((opt) => opt.trim() !== "")
+      if (validOptions.length < 2) {
+        setError("Please provide at least 2 valid options.")
+        return
       }
 
       const savedPoll = await createPoll({
         question: poll.question,
-        options: poll.options,
-        sessionId: parseInt(poll.sessionId),
-      });
+        options: validOptions,
+        sessionId: Number.parseInt(poll.sessionId),
+      })
 
       setPollForms((prevForms) =>
         prevForms.map((p) =>
           p.id === poll.id
-            ? { ...p, backendId: savedPoll.id, status: "draft" }
-            : p
-        )
-      );
+            ? {
+                ...p,
+                backendId: savedPoll.id,
+                status: savedPoll.status || "draft",
+                id: savedPoll.id.toString(), // Update to use backend ID
+              }
+            : p,
+        ),
+      )
 
-      alert("Poll saved as draft successfully!");
-    } catch (error) {
-      alert("Error saving poll: " + (error.response?.data?.message || error.message));
+      setError(null)
+      console.log("Poll saved as draft successfully!")
+    } catch (err) {
+      setError("Error saving poll: " + (err.response?.data?.message || err.message))
     }
-  };
+  }
 
   // Publish poll
-  const handlePublishPoll = async (pollId) => {
+  const handlePublishPoll = async (poll) => {
     try {
-      await publishPoll(pollId);
+      if (!poll.backendId) {
+        setError("Please save the poll as draft first before publishing.")
+        return
+      }
+
+      const updatedPoll = await publishPoll(poll.backendId)
       setPollForms((prevForms) =>
         prevForms.map((p) =>
-          p.backendId === pollId ? { ...p, status: "published" } : p
-        )
-      );
-      alert("Poll published successfully!");
-    } catch (error) {
-      alert("Error publishing poll: " + (error.response?.data?.message || error.message));
+          p.backendId === poll.backendId ? { ...p, status: updatedPoll.status || "published" } : p,
+        ),
+      )
+      setError(null)
+      console.log("Poll published successfully!")
+    } catch (err) {
+      setError("Error publishing poll: " + (err.response?.data?.message || err.message))
     }
-  };
+  }
 
   // Hide poll
-  const handleHidePoll = async (pollId) => {
+  const handleHidePoll = async (poll) => {
     try {
-      await hidePoll(pollId);
+      if (!poll.backendId) {
+        setError("Cannot hide a poll that hasn't been saved.")
+        return
+      }
+
+      const updatedPoll = await hidePoll(poll.backendId)
       setPollForms((prevForms) =>
-        prevForms.map((p) =>
-          p.backendId === pollId ? { ...p, status: "hidden" } : p
-        )
-      );
-      alert("Poll hidden successfully!");
-    } catch (error) {
-      alert("Error hiding poll: " + (error.response?.data?.message || error.message));
+        prevForms.map((p) => (p.backendId === poll.backendId ? { ...p, status: updatedPoll.status || "hidden" } : p)),
+      )
+      setError(null)
+      console.log("Poll hidden successfully!")
+    } catch (err) {
+      setError("Error hiding poll: " + (err.response?.data?.message || err.message))
     }
-  };
+  }
 
   // Complete poll
-  const handleCompletePoll = async (pollId) => {
+  const handleCompletePoll = async (poll) => {
     try {
-      await completePoll(pollId);
+      if (!poll.backendId) {
+        setError("Cannot complete a poll that hasn't been saved.")
+        return
+      }
+
+      const updatedPoll = await completePoll(poll.backendId)
       setPollForms((prevForms) =>
         prevForms.map((p) =>
-          p.backendId === pollId ? { ...p, status: "completed" } : p
-        )
-      );
-      alert("Poll completed successfully!");
-    } catch (error) {
-      alert("Error completing poll: " + (error.response?.data?.message || error.message));
+          p.backendId === poll.backendId ? { ...p, status: updatedPoll.status || "completed" } : p,
+        ),
+      )
+      setError(null)
+      console.log("Poll completed successfully!")
+    } catch (err) {
+      setError("Error completing poll: " + (err.response?.data?.message || err.message))
     }
-  };
+  }
 
-  // Delete poll (frontend only)
-  const handleDeletePoll = (id) => {
-    setPollForms(pollForms.filter((poll) => poll.id !== id));
-  };
+  const handleDeletePoll = async (poll) => {
+    try {
+      // If poll has backendId, delete from backend
+      if (poll.backendId) {
+        await deletePoll(poll.backendId)
+      }
+
+      // Remove from frontend state
+      setPollForms(pollForms.filter((p) => p.id !== poll.id))
+      setError(null)
+      console.log("Poll deleted successfully!")
+    } catch (err) {
+      setError("Error deleting poll: " + (err.response?.data?.message || err.message))
+    }
+  }
 
   // Input handlers
   const handleQuestionChange = (id, question) => {
-    setPollForms(
-      pollForms.map((poll) => (poll.id === id ? { ...poll, question } : poll))
-    );
-  };
+    setPollForms(pollForms.map((poll) => (poll.id === id ? { ...poll, question } : poll)))
+  }
 
   const handleSessionChange = (id, sessionId) => {
-    setPollForms(
-      pollForms.map((poll) => (poll.id === id ? { ...poll, sessionId } : poll))
-    );
-  };
+    setPollForms(pollForms.map((poll) => (poll.id === id ? { ...poll, sessionId } : poll)))
+  }
 
   const handleOptionChange = (pollId, idx, value) => {
     setPollForms(
@@ -142,18 +228,30 @@ export default function Dashboard() {
               ...poll,
               options: poll.options.map((opt, i) => (i === idx ? value : opt)),
             }
-          : poll
-      )
-    );
-  };
+          : poll,
+      ),
+    )
+  }
 
   const handleAddOption = (pollId) => {
+    setPollForms(pollForms.map((poll) => (poll.id === pollId ? { ...poll, options: [...poll.options, ""] } : poll)))
+  }
+
+  const handleRemoveOption = (pollId, idx) => {
     setPollForms(
       pollForms.map((poll) =>
-        poll.id === pollId ? { ...poll, options: [...poll.options, ""] } : poll
-      )
-    );
-  };
+        poll.id === pollId ? { ...poll, options: poll.options.filter((_, i) => i !== idx) } : poll,
+      ),
+    )
+  }
+
+  if (isLoading) {
+    return (
+      <div className={styles.dashboard}>
+        <div className={styles.loading}>Loading polls...</div>
+      </div>
+    )
+  }
 
   return (
     <div className={styles.dashboard}>
@@ -174,11 +272,7 @@ export default function Dashboard() {
 
       <div className={styles.mainLayout}>
         {/* Sidebar */}
-        <aside
-          className={`${styles.sidebar} ${
-            isSidebarOpen ? styles.sidebarOpen : styles.sidebarClosed
-          }`}
-        >
+        <aside className={`${styles.sidebar} ${isSidebarOpen ? styles.sidebarOpen : styles.sidebarClosed}`}>
           <nav className={styles.nav}>
             <Link to="/session" className={styles.navLink}>
               <FiBell size={20} className={styles.icon} />
@@ -192,10 +286,7 @@ export default function Dashboard() {
               <FiAlertCircle size={20} className={styles.icon} />
               {isSidebarOpen && <span>Hide polls</span>}
             </Link>
-            <Link
-              to="/configuration"
-              className={`${styles.navLink} ${styles.activeLink}`}
-            >
+            <Link to="/configuration" className={`${styles.navLink} ${styles.activeLink}`}>
               <FiSettings size={20} className={styles.icon} />
               {isSidebarOpen && <span>Polls history</span>}
             </Link>
@@ -207,11 +298,7 @@ export default function Dashboard() {
         </aside>
 
         {/* Main Content */}
-        <main
-          className={`${styles.mainContent} ${
-            isSidebarOpen ? styles.mainWithSidebar : styles.mainWithoutSidebar
-          }`}
-        >
+        <main className={`${styles.mainContent} ${isSidebarOpen ? styles.mainWithSidebar : styles.mainWithoutSidebar}`}>
           <div className={styles.headerActions}>
             <h1>Create poll</h1>
             <div className={styles.buttonGroup}>
@@ -220,10 +307,22 @@ export default function Dashboard() {
             </div>
           </div>
 
+          {error && (
+            <div className={styles.errorBanner}>
+              <FiAlertCircle size={20} />
+              <span>{error}</span>
+              <button onClick={() => setError(null)}>×</button>
+            </div>
+          )}
+
           {/* Poll Forms */}
           <div className={styles.pollsContainer}>
             {pollForms.map((poll) => (
               <div key={poll.id} className={styles.pollCard}>
+                <div className={styles.pollHeader}>
+                  <span className={`${styles.statusBadge} ${styles[poll.status]}`}>{poll.status}</span>
+                </div>
+
                 {/* Question */}
                 <Input
                   type="text"
@@ -245,21 +344,22 @@ export default function Dashboard() {
                 {/* Options */}
                 <div className={styles.options}>
                   {poll.options.map((opt, idx) => (
-                    <Input
-                      key={idx}
-                      type="text"
-                      value={opt}
-                      onChange={(e) =>
-                        handleOptionChange(poll.id, idx, e.target.value)
-                      }
-                      className={styles.optionInput}
-                    />
+                    <div key={idx} className={styles.optionRow}>
+                      <Input
+                        type="text"
+                        value={opt}
+                        placeholder={`Option ${idx + 1}`}
+                        onChange={(e) => handleOptionChange(poll.id, idx, e.target.value)}
+                        className={styles.optionInput}
+                      />
+                      {poll.options.length > 1 && (
+                        <Button variant="ghost" size="sm" onClick={() => handleRemoveOption(poll.id, idx)}>
+                          ×
+                        </Button>
+                      )}
+                    </div>
                   ))}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleAddOption(poll.id)}
-                  >
+                  <Button variant="outline" size="sm" onClick={() => handleAddOption(poll.id)}>
                     + Add option
                   </Button>
                 </div>
@@ -270,38 +370,30 @@ export default function Dashboard() {
                     variant="outline"
                     size="sm"
                     onClick={() => handleSavePoll(poll)}
+                    disabled={poll.status === "published" || poll.status === "completed"}
                   >
                     Save Draft
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handlePublishPoll(poll.backendId)}
-                    disabled={!poll.backendId}
+                    onClick={() => handlePublishPoll(poll)}
+                    disabled={!poll.backendId || poll.status === "published" || poll.status === "completed"}
                   >
                     Publish
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleCompletePoll(poll.backendId)}
-                    disabled={!poll.backendId}
+                    onClick={() => handleCompletePoll(poll)}
+                    disabled={!poll.backendId || poll.status === "completed"}
                   >
                     Complete
                   </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleHidePoll(poll.backendId)}
-                    disabled={!poll.backendId}
-                  >
+                  <Button variant="outline" size="sm" onClick={() => handleHidePoll(poll)} disabled={!poll.backendId}>
                     Hide
                   </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => handleDeletePoll(poll.id)}
-                  >
+                  <Button variant="destructive" size="sm" onClick={() => handleDeletePoll(poll)}>
                     Delete
                   </Button>
                 </div>
@@ -309,13 +401,11 @@ export default function Dashboard() {
             ))}
 
             {pollForms.length === 0 && (
-              <div className={styles.noPolls}>
-                No polls created yet. Click "Add polls" to create your first poll.
-              </div>
+              <div className={styles.noPolls}>No polls created yet. Click "Add polls" to create your first poll.</div>
             )}
           </div>
         </main>
       </div>
     </div>
-  );
+  )
 }
