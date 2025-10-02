@@ -7,6 +7,7 @@ import {
   completePoll,
   getPolls,
   getPollById,
+  deletePoll,
 } from "../controllers/polls.js";
 import { protect } from "../middlewares/authMiddleware.js";
 
@@ -32,5 +33,8 @@ router.get("/", protect, getPolls);
 
 // Get single poll by ID
 router.get("/:id", protect, getPollById);
+
+// Host deletes a poll
+router.delete("/:id", protect, deletePoll);
 
 export default router;
