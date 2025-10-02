@@ -8,14 +8,28 @@ import Button from "../../components/ui/Button"
 import Input from "../../components/ui/Input"
 import styles from "./Host.module.css"
 import {
-  createPoll,
-  publishPoll,
-  completePoll,
-  hidePoll,
-  deletePoll,
-  fetchPolls,
-  isAuthenticated,
-} from "../../api/polls"
+  
+  FiUser,
+  FiTruck,
+  FiAlertCircle,
+  FiTarget,
+  FiEye,
+  FiSettings,
+  FiBell,
+  FiZap,
+  FiGrid,
+  FiSun,
+  FiMoon,
+  FiMenu,
+  FiX
+} from "react-icons/fi";
+
+// Game icons for missing icons
+import { GiPawPrint, GiFlame } from "react-icons/gi";
+
+import Button from "../../components/ui/button";
+import Input from "../../components/ui/input";
+import styles from "./Host.module.css";
 
 export default function Dashboard() {
   const [isDarkMode, setIsDarkMode] = useState(false)

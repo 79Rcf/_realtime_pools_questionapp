@@ -1,6 +1,6 @@
 import React from "react";
 import { Slot } from "@radix-ui/react-slot";
-import styles from "./Button.module.css"; // CSS module
+import styles from "./button.module.css";
 
 /**
  * Props:

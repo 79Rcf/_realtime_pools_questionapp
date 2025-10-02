@@ -73,11 +73,11 @@
 }
 
 .welcomeText {
-  font-size: 1rem;
+  font-size: 1.5rem;
   color: rgba(255, 255, 255, 0.9);
   margin-top: 1rem;
   z-index: 1;
-  max-width: 300px;
+  max-width: 500px;
 }
 
 .rightPanel {
@@ -147,7 +147,8 @@
 .submitButton {
   width: 100%;
   padding: 0.875rem;
-  background: linear-gradient(135deg, #6b46c1 0%, #8b5cf6 100%);
+  /* background: linear-gradient(135deg, #6b46c1 0%, #8b5cf6 100%); */
+  background-color:  #0056b3;;
   color: white;
   border: none;
   border-radius: 25px;
