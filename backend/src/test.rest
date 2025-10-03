@@ -101,6 +101,7 @@ Content-Type: application/json
  {
   "name": "John Doe",
   "phone": "123456789"
+  "user_id": 1 // this id must be already AUTHENTICATed
 }
 
 ### Get Participants answer from Poll
@@ -138,5 +139,6 @@ Content-Type: application/json
 {
   "participant_id": 2,
   "answer": "Python"
+  
 }
 
